@@ -19,41 +19,41 @@ cv:
         url: https://www.iitj.ac.in/
         area: Electrical Engineering
         studyType: B.Tech
-        start_date: 2019
-        end_date: 2023
+        start_date: "2019"
+        end_date: "2023"
         score: "8.43 / 10.0"
         highlights:
-          - "Core Member of the Robotics Club — participated in AI/ML competitions and hackathons."
+          - "Core Member of the Robotics Club - participated in AI/ML competitions and hackathons."
           - "Research on Document Layout Understanding under Dr. Santanu Chaudhary."
           - "Project on Medical Visual Question Answering using NLP + Computer Vision."
 
     Experience:
-      - company: Microsoft (MSAN — Microsoft Audience Network)
+      - company: Microsoft (MSAN - Microsoft Audience Network)
         position: Applied Scientist
         location: India
-        start_date: 2024-09
+        start_date: "2024-09"
         end_date: present
         highlights:
-          - "Intent-Based Retrieval: Led development of next-generation encoder models for ad retrieval based on user intent. Achieved +14.32 absolute precision points (P@100) over production baseline using 30× less training data."
+          - "Intent-Based Retrieval: Led development of next-generation encoder models for ad retrieval. Achieved +14.32 absolute precision points (P@100) over production baseline using 30x less training data."
           - "A/B Testing Impact: +0.61% CTR and +0.51% revenue lift in NA region. Methodology adopted as standard by US and India MSAN teams."
           - "Unified Evaluation Framework: Designed single source-of-truth evaluation framework across IDC, STCA, and US MSAN teams, supporting encoder-based, Single/Multi-Intent, Generative Retrieval, and ANN variants."
-          - "High-Impact Index for Product Ads: ML-driven retrieval system identifying high-impact product offers based on historical engagement; replaced legacy system, delivering 2.77% revenue lift."
+          - "High-Impact Index for Product Ads: ML-driven retrieval system identifying high-impact product offers; replaced legacy system, delivering 2.77% revenue lift."
 
       - company: Zomato
         position: Machine Learning Engineer
         location: India
-        start_date: 2024-01
-        end_date: 2024-08
+        start_date: "2024-01"
+        end_date: "2024-08"
         highlights:
-          - "Image Quality Score: Fine-tuned ResNet-50 for food image quality classification (F1: 90%). Now a critical component evaluating nearly every food image shown to users, from homepage banners to catalog images."
+          - "Image Quality Score: Fine-tuned ResNet-50 for food image quality classification (F1: 90%). Now a critical component evaluating nearly every food image shown to users."
           - "Ads Creation: Designed automated ad creation system using generative models for background generation and brand-specific styling."
           - "Photo Cake: Built real-time image overlay system using OpenCV; launched on Mother's Day resulting in 3,000+ photo cake sales across India."
 
       - company: Enterpret
         position: ML Research Intern
         location: India
-        start_date: 2023-06
-        end_date: 2023-12
+        start_date: "2023-06"
+        end_date: "2023-12"
         highlights:
           - "Text Similarity at Scale: Led project to assess semantic similarity between sentences based on business value. Scaled solution to 1M+ texts, achieving F1 Score of 85%."
           - "Explored prompt engineering, transformer fine-tuning, novel loss functions, and LLMs for optimal results."
@@ -65,27 +65,27 @@ cv:
           - Akkshita Trivedi
           - Akarsh Upadhyay
           - et al.
-        publisher: "18th International Conference on Document Analysis and Recognition (ICDAR 2024)"
-        releaseDate: 2024
+        publisher: 18th International Conference on Document Analysis and Recognition (ICDAR)
+        releaseDate: "2024"
         summary: A generic document pretraining approach that improves document understanding across various downstream tasks.
 
     Projects:
       - name: Document Layout Understanding
-        summary: "Multi-modal transformer (DocFormer) for Visual Document Understanding (VDU) in English and multilingual settings. Worked under guidance of Dr. Santanu Chaudhary, IIT Jodhpur."
+        summary: "Multi-modal transformer (DocFormer) for Visual Document Understanding (VDU) in English and multilingual settings. Guided by Dr. Santanu Chaudhary, IIT Jodhpur."
         highlights:
-          - "Applied DocFormer architecture for document understanding tasks."
-          - "Extended to multilingual document settings."
-        start_date: 2021-07
-        end_date: 2022-05
+          - Applied DocFormer architecture for document understanding tasks.
+          - Extended to multilingual document settings.
+        start_date: "2021-07"
+        end_date: "2022-05"
         url: https://github.com/uakarsh
 
       - name: Medical Visual Question Answering
         summary: "VQA system for X-ray/MRI scans (brain, kidney, lungs) using NLP and Computer Vision (TensorFlow). Achieved ~90% accuracy on the test set."
         highlights:
-          - "Fused visual attention with NLP for multi-modal QA."
+          - Fused visual attention with NLP for multi-modal QA.
           - "Trained on medical imaging datasets achieving 90% test accuracy."
-        start_date: 2021-02
-        end_date: 2021-05
+        start_date: "2021-02"
+        end_date: "2021-05"
         url: https://github.com/uakarsh
 
     Skills:
@@ -106,9 +106,9 @@ cv:
 
     Languages:
       - name: English
-        summary: "Fluent"
+        summary: Fluent
       - name: Hindi
-        summary: "Native"
+        summary: Native
 
     Interests:
       - name: Research Interests

@@ -23,6 +23,7 @@ This project explored **Visual Document Understanding (VDU)** — the task of co
 ## What is DocFormer?
 
 DocFormer is a multi-modal transformer that encodes:
+
 - **Text tokens** (from OCR output)
 - **Visual features** (from a CNN backbone over the document image)
 - **Spatial/layout features** (bounding box coordinates)
