@@ -22,12 +22,12 @@ latest_posts:
   enabled: false
 ---
 
-I am an Applied Scientist at **Microsoft's MSAN (Microsoft Audience Network)** team, where I build next-generation machine learning systems for intent-based ad retrieval and monetization. My work spans encoder model development, unified evaluation frameworks, and data quality pipelines — most recently achieving **+14.32 absolute precision points (P@100)** over production baselines while using **30× less training data**, with **+0.61% CTR** and **+0.51% revenue lift** validated in A/B testing.
+I build ML systems where the solution becomes the foundation for what comes next.
 
-Before Microsoft, I was a Machine Learning Engineer at **Zomato**, where I built computer vision systems that now evaluate nearly every food image displayed to users across the platform. Prior to that, I was a research intern at **Enterpret**, working on semantic text similarity at scale (1M+ texts).
+Right now at **Microsoft**, I'm working on retrieval models for ad selection. A lot of my work isn't glamorous: data quality pipelines, optimizations, evaluation frameworks, error analysis — but getting these fundamentals right is what actually moves the needle. When the boring stuff is solid, everything else compounds. Oh, and I also train the models at scale. They work pretty well, turns out.
 
-I hold a **B.Tech in Electrical Engineering from IIT Jodhpur** (GPA: 8.43/10.0, 2019–2023).
+Before Microsoft, I shipped AI systems to millions of users at **Zomato** — everything from image quality scoring and personalized photo cakes to a PoC for automated ad creation. At **Enterpret**, I researched text similarity at scale, spending most of my time on data preparation because that's usually where projects succeed or fail.
 
-My research and engineering interests lie at the intersection of **information retrieval**, **representation learning**, and **data quality**. I believe that principled dataset curation is often the highest-leverage intervention in building high-performing ML systems — a theme that runs through my work on ad retrieval, image quality scoring, and document understanding.
+I hold a **B.Tech in Electrical Engineering from IIT Jodhpur** (2019–2023) and have a publication at **[ICDAR 2024](https://icdar2024.net/)** on generic document pretraining for improved document understanding.
 
-I have a publication at **[ICDAR 2024](https://icdar2024.net/)** on generic document pretraining for improved document understanding.
+What drives me: I care about foundational work. The kind where if you get it right, it unlocks progress for everyone who comes after — be it data, modeling, or evaluations.
