@@ -20,7 +20,7 @@ group :jekyll_plugins do
     gem 'jekyll-sitemap'
     gem 'jekyll-socials'
     gem 'jekyll-tabs'
-    gem 'jekyll-terser'
+    # gem 'jekyll-terser'  # requires Ruby >= 3.4.2, incompatible with GitHub Actions Ruby 3.3.x
     gem 'jekyll-toc'
     gem 'jekyll-twitter-plugin'
     gem 'jemoji'
