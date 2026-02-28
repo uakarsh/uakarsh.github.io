@@ -1,0 +1,12 @@
+github_users:
+  - uakarsh
+
+repo_description_lines_max: 2
+
+github_repos:
+  - uakarsh/latr
+  - uakarsh/docformer
+  - uakarsh/docformerv2
+  - uakarsh/nano-t5
+  - uakarsh/data-quality-related-experiments
+  - uakarsh/modeling-dl
