@@ -8,10 +8,9 @@ function applyTheme(theme) {
   localStorage.setItem('theme', theme);
 }
 
-// Follow OS preference on first visit, then remember user choice
-const saved  = localStorage.getItem('theme');
-const osDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-applyTheme(saved || (osDark ? 'dark' : 'light'));
+// Default to light; remember user choice across visits
+const saved = localStorage.getItem('theme');
+applyTheme(saved || 'light');
 
 checkbox.addEventListener('change', () => {
   applyTheme(checkbox.checked ? 'dark' : 'light');
