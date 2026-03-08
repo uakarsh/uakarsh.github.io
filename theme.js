@@ -8,9 +8,9 @@ function applyTheme(theme) {
   localStorage.setItem('theme', theme);
 }
 
-// Default to light; remember user choice across visits
-const saved = localStorage.getItem('theme');
-applyTheme(saved || 'light');
+// Always start light; clear any saved dark preference
+localStorage.removeItem('theme');
+applyTheme('light');
 
 checkbox.addEventListener('change', () => {
   applyTheme(checkbox.checked ? 'dark' : 'light');
