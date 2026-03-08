@@ -72,3 +72,32 @@ if (menuBtn && navDrawer) {
     }
   });
 }
+
+
+// Wrap in a block to prevent "redeclaration" errors
+{
+  const menuBtn = document.getElementById('menuBtn');
+  const navDrawer = document.getElementById('navDrawer');
+
+  if (menuBtn && navDrawer) {
+    menuBtn.addEventListener('click', () => {
+      navDrawer.classList.toggle('open');
+      
+      // Optional: Visual feedback on the button
+      if (navDrawer.classList.contains('open')) {
+        menuBtn.style.color = 'var(--accent)';
+      } else {
+        menuBtn.style.color = '';
+      }
+    });
+
+    // Close drawer when a link is clicked
+    const drawerLinks = navDrawer.querySelectorAll('a');
+    drawerLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        navDrawer.classList.remove('open');
+        menuBtn.style.color = '';
+      });
+    });
+  }
+}

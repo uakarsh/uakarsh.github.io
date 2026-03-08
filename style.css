@@ -716,15 +716,53 @@ footer {
 .nav-drawer ul li a.active { color: var(--accent); }
 .nav-drawer ul li a:hover { color: var(--text); }
 
-/* ── Responsive ──────────────────────────────────────────── */
+/* ── Final Responsive & Luxury Mobile Menu ───────────────── */
 
-@media (max-width: 560px) {
-  html { font-size: 17px; }
-  main { padding-top: calc(var(--nav-h) + 48px); padding-left: 20px; padding-right: 20px; }
-  .hero { flex-direction: column; gap: 20px; }
-  .about-hero { flex-direction: column; gap: 20px; }
-  .exp-entry, .edu-entry { grid-template-columns: 1fr; gap: 4px; }
-  .exp-dates, .edu-dates { margin-bottom: 6px; }
+@media (max-width: 768px) {
+  /* Triggering the menu at 768px covers tablets and larger phones */
   .nav-links .hide-sm { display: none; }
   .nav-menu-btn { display: block; }
+
+  /* Luxury Drawer Animation */
+  .nav-drawer {
+    display: block; /* Always 'block' so the transition works */
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  }
+
+  /* When the 'open' class is added via JS */
+  .nav-drawer.open {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 560px) {
+  /* Smaller phone specific layout tweaks */
+  html { font-size: 17px; }
+  
+  main { 
+    padding-top: calc(var(--nav-h) + 48px); 
+    padding-left: 20px; 
+    padding-right: 20px; 
+  }
+
+  /* Stack hero and about elements vertically */
+  .hero, .about-hero { 
+    flex-direction: column; 
+    gap: 20px; 
+  }
+
+  h1 { font-size: 2.2rem; }
+
+  .exp-entry, .edu-entry { 
+    grid-template-columns: 1fr; 
+    gap: 4px; 
+  }
+
+  .exp-dates, .edu-dates { margin-bottom: 6px; }
 }
