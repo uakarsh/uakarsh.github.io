@@ -60,8 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const navDrawer = document.getElementById('navDrawer');
 
   if (menuBtn) {
-    menuBtn.addEventListener('click', function(e) {
-      console.log('Button clicked');
+    menuBtn.addEventListener('click', function() {
       navDrawer.classList.toggle('open');
     });
   }

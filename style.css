@@ -187,6 +187,8 @@ h1 {
   text-wrap: balance;
 }
 
+.page-h1 { margin-bottom: 40px; }
+
 h2 {
   font-family: var(--font-ui);
   font-size: 0.65rem;
@@ -730,54 +732,14 @@ footer {
   padding: 16px 24px;
 }
 
-.nav-drawer ul li a:hover { 
+.nav-drawer ul li a:hover {
   color: var(--text);
   background: var(--bg-subtle);
 }
 
-.nav-drawer ul li a.active { 
+.nav-drawer ul li a.active {
   color: var(--accent);
   font-weight: 500;
-}
-
-.nav-drawer ul li a:hover { 
-  color: var(--text);
-}
-
-/* ── Final Responsive & Luxury Mobile Menu ───────────────── */
-
-@media (max-width: 768px) {
-  /* Hide desktop nav items on mobile */
-  .nav-links a[href*="experience"],
-  .nav-links a[href*="projects"],
-  .nav-links a[href*="achievements"] {
-    display: none !important;
-  }
-  
-  /* Show hamburger menu */
-  #menuBtn {
-    display: block !important;
-  }
-  
-  /* Mobile drawer - slides from RIGHT */
-  .nav-drawer {
-    position: fixed;
-    top: 0;
-    right: -100%;  /* Start off-screen to the RIGHT */
-    left: auto !important;  /* Override any left positioning */
-    width: 70%;
-    max-width: 300px;
-    height: 100vh;
-    background: var(--bg);
-    box-shadow: -2px 0 10px rgba(0,0,0,0.2);
-    padding: 80px 20px 20px;
-    transition: right 0.3s ease;
-    z-index: 1000;
-  }
-  
-  .nav-drawer.open {
-    right: 0;  /* Slide in from RIGHT */
-  }
 }
 
 @media (max-width: 560px) {
@@ -817,25 +779,8 @@ footer {
   }
 }
 
-/* ── Mobile fixes ───────────────────────────────────────── */
 @media (max-width: 768px) {
-  /* Hide desktop nav items */
-  .hide-sm {
-    display: none !important;
-  }
-  
-  /* Show hamburger button only on mobile */
-  .nav-menu-btn {
-    display: flex !important;
-  }
-  
-  /* Mobile drawer slides from TOP */
-  .nav-drawer {
-    top: var(--nav-h);
-    left: 0;
-    right: 0;
-    bottom: auto;
-  }
+  .hide-sm { display: none !important; }
 }
 
 /* Hide burger button on desktop/laptop */
