@@ -667,34 +667,66 @@ footer {
   background: none;
   border: none;
   cursor: pointer;
-  padding: 4px;
+  padding: 6px 4px;
   color: var(--text-2);
   flex-shrink: 0;
+  position: relative;
+  transition: color var(--ease);
 }
 
-.nav-menu-btn svg { display: block; }
+.nav-menu-btn:hover {
+  color: var(--text);
+}
+
+.nav-menu-btn svg { 
+  display: block;
+  width: 20px;
+  height: 20px;
+}
 
 /* Mobile nav drawer */
 .nav-drawer {
   display: none;
   position: fixed;
   top: var(--nav-h);
-  left: 0; right: 0;
+  left: 0; 
+  right: 0;
   background: var(--nav-bg);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
   z-index: 49;
-  padding: 16px 24px 20px;
+  padding: 0;
+  max-height: calc(100vh - var(--nav-h));
+  overflow-y: auto;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-.nav-drawer.open { display: block; }
+.nav-drawer.open { 
+  display: block;
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
 
 .nav-drawer ul {
   list-style: none;
   display: flex;
   flex-direction: column;
   gap: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-drawer ul li {
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-drawer ul li:last-child {
+  border-bottom: none;
 }
 
 .nav-drawer ul li a {
@@ -706,15 +738,22 @@ footer {
   text-transform: uppercase;
   color: var(--text-2);
   text-decoration: none;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--border);
-  transition: color var(--ease);
+  padding: 16px 24px;
+  transition: color var(--ease), background var(--ease);
 }
 
-.nav-drawer ul li:last-child a { border-bottom: none; }
+.nav-drawer ul li a:active {
+  background: var(--bg-subtle);
+}
 
-.nav-drawer ul li a.active { color: var(--accent); }
-.nav-drawer ul li a:hover { color: var(--text); }
+.nav-drawer ul li a.active { 
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.nav-drawer ul li a:hover { 
+  color: var(--text);
+}
 
 /* ── Final Responsive & Luxury Mobile Menu ───────────────── */
 
@@ -722,23 +761,6 @@ footer {
   /* Triggering the menu at 768px covers tablets and larger phones */
   .nav-links .hide-sm { display: none; }
   .nav-menu-btn { display: block; }
-
-  /* Luxury Drawer Animation */
-  .nav-drawer {
-    display: block; /* Always 'block' so the transition works */
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(-10px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-  }
-
-  /* When the 'open' class is added via JS */
-  .nav-drawer.open {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translateY(0);
-  }
 }
 
 @media (max-width: 560px) {
@@ -765,4 +787,16 @@ footer {
   }
 
   .exp-dates, .edu-dates { margin-bottom: 6px; }
+  
+  .work-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  
+  .work-meta {
+    order: -1;
+    margin-bottom: 6px;
+  }
+}
 }
