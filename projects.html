@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Projects — Akarsh Upadhyay. Document AI, Medical VQA." />
+  <title>Projects — Akarsh Upadhyay</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <nav id="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-home">Akarsh Upadhyay</a>
+      <ul class="nav-links">
+        <li><a href="research.html" class="hide-sm">Research</a></li>
+        <li><a href="projects.html" class="active hide-sm">Projects</a></li>
+        <li><a href="experience.html">Experience</a></li>
+        <li><a href="writing.html" class="hide-sm">Writing</a></li>
+        <li><a href="people.html" class="hide-sm">People</a></li>
+        <li><a href="bookshelf.html" class="hide-sm">Bookshelf</a></li>
+        <li><label class="toggle-switch" aria-label="Toggle dark mode"><input type="checkbox" id="themeCheck" /><span class="toggle-track"><span class="toggle-thumb"></span></span></label></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+
+    <h1 style="margin-bottom: 40px;">Projects</h1>
+
+    <div class="project">
+      <div class="project-header">
+        <span class="project-name">Document Layout Understanding — DocFormer</span>
+        <span class="project-year">2021 – 2022</span>
+      </div>
+      <p class="project-desc">
+        Multi-modal document understanding using the DocFormer architecture — a transformer
+        that jointly encodes text, visual features, and spatial layout for Visual Document
+        Understanding tasks. Conducted under Dr. Santanu Chaudhary at IIT Jodhpur.
+        Extended the original English-only model to multilingual document settings.
+      </p>
+      <a class="project-link" href="https://github.com/shabie/docformer" target="_blank" rel="noopener">GitHub ↗</a>
+      <div class="tags">
+        <span class="tag">PyTorch</span>
+        <span class="tag">Transformers</span>
+        <span class="tag">Document AI</span>
+        <span class="tag">Multi-lingual</span>
+      </div>
+    </div>
+
+    <div class="project">
+      <div class="project-header">
+        <span class="project-name">Medical Visual Question Answering</span>
+        <span class="project-year">2021</span>
+      </div>
+      <p class="project-desc">
+        Medical VQA system that answers natural language questions about clinical images
+        by jointly reasoning over vision and language. CNN-based visual encoders with
+        cross-modal attention, achieving 90% accuracy on benchmark datasets.
+      </p>
+      <div class="tags">
+        <span class="tag">TensorFlow</span>
+        <span class="tag">Keras</span>
+        <span class="tag">Computer Vision</span>
+        <span class="tag">Medical AI</span>
+        <span class="tag">VQA</span>
+      </div>
+    </div>
+
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <p>© 2026 Akarsh Upadhyay</p>
+      <p><a href="mailto:akarshupadhyayabc@gmail.com">akarshupadhyayabc@gmail.com</a></p>
+    </div>
+  </footer>
+
+  <script src="theme.js"></script>
+</body>
+</html>

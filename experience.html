@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Experience — Akarsh Upadhyay. Microsoft, Zomato, Enterpret." />
+  <title>Experience — Akarsh Upadhyay</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <nav id="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-home">Akarsh Upadhyay</a>
+      <ul class="nav-links">
+        <li><a href="research.html" class="hide-sm">Research</a></li>
+        <li><a href="projects.html" class="hide-sm">Projects</a></li>
+        <li><a href="experience.html" class="active">Experience</a></li>
+        <li><a href="writing.html" class="hide-sm">Writing</a></li>
+        <li><a href="people.html" class="hide-sm">People</a></li>
+        <li><a href="bookshelf.html" class="hide-sm">Bookshelf</a></li>
+        <li><label class="toggle-switch" aria-label="Toggle dark mode"><input type="checkbox" id="themeCheck" /><span class="toggle-track"><span class="toggle-thumb"></span></span></label></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+
+    <div class="section">
+      <h1 style="margin-bottom: 40px;">Experience</h1>
+      <h2>Work</h2>
+
+      <div class="exp-entry" id="microsoft">
+        <div class="exp-left">
+          <p class="exp-dates">Sep 2024 — Present</p>
+        </div>
+        <div>
+          <p class="exp-company">Microsoft</p>
+          <p class="exp-role">Applied Scientist · MSAN</p>
+          <div class="exp-body">
+            <p>
+              I work on retrieval models for Microsoft's Audience Network — the system that
+              matches ads to relevant content across the web. My main focus is intent-based
+              retrieval: building encoder models that understand what a user is actually
+              looking for and surface ads that genuinely match.
+            </p>
+            <p>
+              The next-generation retrieval model I led achieved
+              <strong>+14.32 absolute precision points (P@100)</strong> over the production
+              baseline using 30× less training data. It went into A/B testing in NA and
+              delivered <strong>+0.61% CTR</strong> and <strong>+0.51% revenue lift</strong>.
+              The evaluation methodology was adopted as standard across US and India MSAN teams.
+            </p>
+            <p>
+              I also designed a unified evaluation framework across three teams (IDC, STCA, US MSAN)
+              and built a high-impact product ads index using ML-driven retrieval that replaced
+              the legacy rule-based system, delivering a <strong>2.77% revenue lift</strong>.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="exp-entry" id="zomato">
+        <div class="exp-left">
+          <p class="exp-dates">Jan 2024 — Aug 2024</p>
+        </div>
+        <div>
+          <p class="exp-company">Zomato</p>
+          <p class="exp-role">Machine Learning Engineer</p>
+          <div class="exp-body">
+            <p>
+              Built an image quality scorer — a fine-tuned ResNet-50 (F1: 90%) that now
+              evaluates nearly every food photo on the platform. Also designed an automated
+              ad creation system using generative models, and built Photo Cake — a real-time
+              image overlay feature that drove <strong>3,000+ orders</strong> on Mother's Day.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="exp-entry" id="enterpret">
+        <div class="exp-left">
+          <p class="exp-dates">Jun 2023 — Dec 2023</p>
+        </div>
+        <div>
+          <p class="exp-company">Enterpret</p>
+          <p class="exp-role">ML Research Intern</p>
+          <div class="exp-body">
+            <p>
+              Led semantic text similarity at scale — scaled to <strong>1M+ texts</strong>
+              with F1 of 85%, exploring prompt engineering, fine-tuning, and novel loss functions.
+              Wrote 20+ pages of data preparation guidelines and supervised the annotation team.
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <hr class="rule" />
+
+    <div class="section" id="education">
+      <h2>Education</h2>
+      <div class="edu-entry">
+        <div class="edu-dates">2019 – 2023</div>
+        <div>
+          <p class="edu-name">IIT Jodhpur</p>
+          <p class="edu-degree">B.Tech, Electrical Engineering</p>
+          <p class="edu-gpa">GPA 8.43 / 10.0</p>
+        </div>
+      </div>
+      <div class="edu-entry">
+        <div class="edu-dates">2017 – 2019</div>
+        <div>
+          <p class="edu-name">Gyanmanjari Vidyapith, Bhavnagar</p>
+          <p class="edu-degree">Higher Secondary (Grades 11–12)</p>
+        </div>
+      </div>
+      <div class="edu-entry">
+        <div class="edu-dates">– 2017</div>
+        <div>
+          <p class="edu-name">Saint Xavier's High School, Botad</p>
+          <p class="edu-degree">Primary & Secondary (KG–10th)</p>
+        </div>
+      </div>
+    </div>
+
+    <hr class="rule" />
+
+    <div class="section">
+      <h2>CV</h2>
+      <div class="inline-links">
+        <a href="Akarsh_Resume_ML_F.pdf" target="_blank" rel="noopener">Download PDF</a>
+      </div>
+    </div>
+
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <p>© 2026 Akarsh Upadhyay</p>
+      <p><a href="mailto:akarshupadhyayabc@gmail.com">akarshupadhyayabc@gmail.com</a></p>
+    </div>
+  </footer>
+
+  <script src="theme.js"></script>
+</body>
+</html>
