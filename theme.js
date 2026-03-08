@@ -22,20 +22,24 @@ const nav = document.getElementById('nav');
 let lastY = 0;
 let idleTimer;
 
+let scrollTimer = null;
 window.addEventListener('scroll', () => {
-  const y = window.scrollY;
-  if (y > lastY && y > 80) {
-    nav.style.transform = 'translateY(-100%)';
-  } else {
-    nav.style.transform = 'translateY(0)';
-    nav.style.opacity   = '1';
-  }
-  lastY = y;
-
-  clearTimeout(idleTimer);
-  if (y > 80) {
-    idleTimer = setTimeout(() => { nav.style.opacity = '0.5'; }, 2000);
-  }
+  if (scrollTimer) return;
+  scrollTimer = setTimeout(() => {
+    const y = window.scrollY;
+    if (y > lastY && y > 80) {
+      nav.style.transform = 'translateY(-100%)';
+    } else {
+      nav.style.transform = 'translateY(0)';
+      nav.style.opacity   = '1';
+    }
+    lastY = y;
+    clearTimeout(idleTimer);
+    if (y > 80) {
+      idleTimer = setTimeout(() => { nav.style.opacity = '0.5'; }, 2000);
+    }
+    scrollTimer = null;
+  }, 16);
 }, { passive: true });
 
 document.addEventListener('mousemove', (e) => {
@@ -65,9 +69,19 @@ document.addEventListener('DOMContentLoaded', function() {
   // Close when a link is tapped
   if (navDrawer) {
     navDrawer.querySelectorAll('a').forEach(function(link) {
-      link.addEventListener('click', function() {
-        navDrawer.classList.remove('open');
-      });
+      link.addEventListener('click', function(e) {
+      navDrawer.classList.remove('open');
+      if (this.hash && window.location.pathname === this.pathname) {
+        e.preventDefault();
+        setTimeout(() => {
+          const target = document.querySelector(this.hash);
+          if (target) {
+            target.scrollIntoView({ behavior: 'auto' });
+            history.pushState(null, null, this.hash);
+          }
+        }, 300);
+      }
+    });
     });
   }
 });
