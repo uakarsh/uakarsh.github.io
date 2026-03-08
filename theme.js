@@ -49,3 +49,26 @@ document.addEventListener('keydown', () => {
   nav.style.transform = 'translateY(0)';
   nav.style.opacity   = '1';
 });
+
+// ── Mobile hamburger menu ─────────────────────────────────────
+const menuBtn    = document.getElementById('menuBtn');
+const navDrawer  = document.getElementById('navDrawer');
+
+if (menuBtn && navDrawer) {
+  menuBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    navDrawer.classList.toggle('open');
+  });
+
+  // Close when a link is tapped
+  navDrawer.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => navDrawer.classList.remove('open'));
+  });
+
+  // Close when tapping outside
+  document.addEventListener('click', (e) => {
+    if (!navDrawer.contains(e.target) && e.target !== menuBtn) {
+      navDrawer.classList.remove('open');
+    }
+  });
+}

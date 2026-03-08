@@ -660,6 +660,62 @@ footer {
 
 .footer-inner a:hover { color: var(--accent); }
 
+/* ── Hamburger button (mobile only) ──────────────────────── */
+
+.nav-menu-btn {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  color: var(--text-2);
+  flex-shrink: 0;
+}
+
+.nav-menu-btn svg { display: block; }
+
+/* Mobile nav drawer */
+.nav-drawer {
+  display: none;
+  position: fixed;
+  top: var(--nav-h);
+  left: 0; right: 0;
+  background: var(--nav-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  z-index: 49;
+  padding: 16px 24px 20px;
+}
+
+.nav-drawer.open { display: block; }
+
+.nav-drawer ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.nav-drawer ul li a {
+  display: block;
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-2);
+  text-decoration: none;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  transition: color var(--ease);
+}
+
+.nav-drawer ul li:last-child a { border-bottom: none; }
+
+.nav-drawer ul li a.active { color: var(--accent); }
+.nav-drawer ul li a:hover { color: var(--text); }
+
 /* ── Responsive ──────────────────────────────────────────── */
 
 @media (max-width: 560px) {
@@ -670,4 +726,5 @@ footer {
   .exp-entry, .edu-entry { grid-template-columns: 1fr; gap: 4px; }
   .exp-dates, .edu-dates { margin-bottom: 6px; }
   .nav-links .hide-sm { display: none; }
+  .nav-menu-btn { display: block; }
 }
