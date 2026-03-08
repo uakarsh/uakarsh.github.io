@@ -10,6 +10,7 @@
 /* Light mode: Dario's exact cream */
 :root,
 [data-theme="light"] {
+  color-scheme: light;
   --bg:       #f0eee6;
   --bg-subtle:#e8e6dc;
   --text:     #1a1a18;
