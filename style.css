@@ -686,7 +686,6 @@ footer {
 
 /* Mobile nav drawer */
 .nav-drawer {
-  display: none;
   position: fixed;
   top: var(--nav-h);
   left: 0; 
@@ -701,15 +700,16 @@ footer {
   overflow-y: auto;
   opacity: 0;
   pointer-events: none;
-  transform: translateY(-10px);
+  transform: translateY(-100%);
   transition: opacity 0.3s ease, transform 0.3s ease;
+  visibility: hidden;
 }
 
 .nav-drawer.open { 
-  display: block;
   opacity: 1;
   pointer-events: auto;
   transform: translateY(0);
+  visibility: visible;
 }
 
 .nav-drawer ul {
@@ -798,5 +798,4 @@ footer {
     order: -1;
     margin-bottom: 6px;
   }
-}
 }
