@@ -837,3 +837,10 @@ footer {
     bottom: auto;
   }
 }
+
+/* Hide burger button on desktop/laptop */
+@media (min-width: 769px) {
+  .nav-menu-btn {
+    display: none;
+  }
+}
