@@ -51,53 +51,23 @@ document.addEventListener('keydown', () => {
 });
 
 // ── Mobile hamburger menu ─────────────────────────────────────
-const menuBtn    = document.getElementById('menuBtn');
-const navDrawer  = document.getElementById('navDrawer');
-
-if (menuBtn && navDrawer) {
-  menuBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    navDrawer.classList.toggle('open');
-  });
-
-  // Close when a link is tapped
-  navDrawer.querySelectorAll('a').forEach(a => {
-    a.addEventListener('click', () => navDrawer.classList.remove('open'));
-  });
-
-  // Close when tapping outside
-  document.addEventListener('click', (e) => {
-    if (!navDrawer.contains(e.target) && e.target !== menuBtn) {
-      navDrawer.classList.remove('open');
-    }
-  });
-}
-
-
-// Wrap in a block to prevent "redeclaration" errors
-{
+document.addEventListener('DOMContentLoaded', function() {
   const menuBtn = document.getElementById('menuBtn');
   const navDrawer = document.getElementById('navDrawer');
 
-  if (menuBtn && navDrawer) {
-    menuBtn.addEventListener('click', () => {
+  if (menuBtn) {
+    menuBtn.addEventListener('click', function(e) {
+      console.log('Button clicked');
       navDrawer.classList.toggle('open');
-      
-      // Optional: Visual feedback on the button
-      if (navDrawer.classList.contains('open')) {
-        menuBtn.style.color = 'var(--accent)';
-      } else {
-        menuBtn.style.color = '';
-      }
     });
+  }
 
-    // Close drawer when a link is clicked
-    const drawerLinks = navDrawer.querySelectorAll('a');
-    drawerLinks.forEach(link => {
-      link.addEventListener('click', () => {
+  // Close when a link is tapped
+  if (navDrawer) {
+    navDrawer.querySelectorAll('a').forEach(function(link) {
+      link.addEventListener('click', function() {
         navDrawer.classList.remove('open');
-        menuBtn.style.color = '';
       });
     });
   }
-}
+});

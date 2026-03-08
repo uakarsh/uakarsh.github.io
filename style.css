@@ -71,6 +71,7 @@ nav {
 }
 
 .nav-inner {
+  position: relative;
   max-width: var(--width);
   margin: 0 auto;
   padding: 0 24px;
@@ -122,7 +123,7 @@ nav {
   display: flex;
   align-items: center;
   cursor: pointer;
-  margin-left: 10px;
+  margin-left: 0;
   flex-shrink: 0;
 }
 
@@ -663,15 +664,18 @@ footer {
 /* ── Hamburger button (mobile only) ──────────────────────── */
 
 .nav-menu-btn {
-  display: none;
   background: none;
   border: none;
   cursor: pointer;
-  padding: 6px 4px;
+  padding: 6px 8px;
   color: var(--text-2);
   flex-shrink: 0;
   position: relative;
-  transition: color var(--ease);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  pointer-events: auto !important;
 }
 
 .nav-menu-btn:hover {
@@ -680,43 +684,28 @@ footer {
 
 .nav-menu-btn svg { 
   display: block;
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
 }
 
 /* Mobile nav drawer */
 .nav-drawer {
+  display: none;
   position: fixed;
   top: var(--nav-h);
   left: 0; 
   right: 0;
   background: var(--nav-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
   z-index: 49;
-  padding: 0;
-  max-height: calc(100vh - var(--nav-h));
-  overflow-y: auto;
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(-100%);
-  transition: opacity 0.3s ease, transform 0.3s ease;
-  visibility: hidden;
 }
 
 .nav-drawer.open { 
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateY(0);
-  visibility: visible;
+  display: block;
 }
 
 .nav-drawer ul {
   list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
   padding: 0;
   margin: 0;
 }
@@ -739,10 +728,10 @@ footer {
   color: var(--text-2);
   text-decoration: none;
   padding: 16px 24px;
-  transition: color var(--ease), background var(--ease);
 }
 
-.nav-drawer ul li a:active {
+.nav-drawer ul li a:hover { 
+  color: var(--text);
   background: var(--bg-subtle);
 }
 
@@ -760,7 +749,12 @@ footer {
 @media (max-width: 768px) {
   /* Triggering the menu at 768px covers tablets and larger phones */
   .nav-links .hide-sm { display: none; }
-  .nav-menu-btn { display: block; }
+  .nav-links {
+    gap: 8px;
+  }
+  .nav-menu-btn { 
+    display: flex !important;
+  }
 }
 
 @media (max-width: 560px) {
