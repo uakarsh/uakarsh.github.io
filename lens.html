@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Lens — a human-in-the-loop error analysis tool for image classifiers. By Akarsh Upadhyay." />
+  <title>Lens: structured error analysis for ML models — Akarsh Upadhyay</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .post-header { margin-bottom: 56px; }
+    .post-title {
+      font-family: var(--font-display);
+      font-size: 2.4rem;
+      font-weight: 400;
+      line-height: 1.2;
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+    .post-byline {
+      font-family: var(--font-ui);
+      font-size: 0.68rem;
+      color: var(--text-3);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .post-body h2 {
+      font-family: var(--font-ui);
+      font-size: 0.63rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      margin-top: 52px;
+      margin-bottom: 20px;
+    }
+    .post-body p {
+      font-size: 1rem;
+      line-height: 1.9;
+      color: var(--text-2);
+      margin-bottom: 20px;
+    }
+    .post-body p:last-child { margin-bottom: 0; }
+    .post-body strong { color: var(--text); font-weight: 500; }
+    .post-body a { color: var(--accent); }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 28px 0;
+      font-family: var(--font-ui);
+      font-size: 0.78rem;
+    }
+    .data-table th {
+      text-align: left;
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-3);
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-size: 0.62rem;
+    }
+    .data-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-2);
+      line-height: 1.5;
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table td:first-child { color: var(--text); }
+    .callout {
+      border-left: 2px solid var(--border);
+      padding: 4px 0 4px 20px;
+      margin: 32px 0;
+    }
+    .callout p {
+      font-size: 0.95rem;
+      font-style: italic;
+      color: var(--text-3);
+      margin-bottom: 0;
+    }
+    .back-link {
+      display: inline-block;
+      font-family: var(--font-ui);
+      font-size: 0.65rem;
+      color: var(--text-3);
+      text-decoration: none;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 48px;
+      transition: color var(--ease);
+    }
+    .back-link:hover { color: var(--accent); text-decoration: none; }
+    .post-body .section-heading {
+      font-family: var(--font-body);
+      font-size: 1.15rem;
+      font-weight: 500;
+      color: var(--text);
+      margin-top: 52px;
+      margin-bottom: 18px;
+    }
+    .pipeline-block {
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      margin: 28px 0;
+      overflow: hidden;
+    }
+    .pipeline-row {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 0 20px;
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border);
+      align-items: start;
+    }
+    .pipeline-row:last-child { border-bottom: none; }
+    .pipeline-num {
+      font-family: var(--font-ui);
+      font-size: 0.62rem;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.06em;
+      padding-top: 3px;
+    }
+    .pipeline-content strong {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .pipeline-content p {
+      font-size: 0.88rem;
+      line-height: 1.75;
+      color: var(--text-2);
+      margin-bottom: 0;
+    }
+    .post-img {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      margin: 32px 0 8px;
+      display: block;
+    }
+    .post-img-caption {
+      font-family: var(--font-ui);
+      font-size: 0.68rem;
+      color: var(--text-3);
+      letter-spacing: 0.02em;
+      margin-bottom: 32px;
+    }
+    .failure-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin: 24px 0 32px;
+    }
+    .failure-card {
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+      width: fit-content;
+    }
+    .failure-card img {
+      display: block;
+      width: 128px;
+      height: 128px;
+      image-rendering: pixelated;
+    }
+    .failure-card-label {
+      padding: 6px 8px;
+      border-top: 1px solid var(--border);
+      width: 128px;
+    }
+    .failure-card-label .fc-classes {
+      font-family: var(--font-ui);
+      font-size: 0.68rem;
+      color: var(--text);
+      font-weight: 500;
+    }
+    .failure-card-label .fc-verdict {
+      font-family: var(--font-ui);
+      font-size: 0.62rem;
+      color: var(--text-3);
+      margin-top: 2px;
+      line-height: 1.4;
+    }
+    .summary-diagram {
+      width: 100%;
+      margin: 36px 0 40px;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <nav id="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-home">Akarsh Upadhyay</a>
+      <ul class="nav-links">
+        <li><a href="research.html" class="hide-sm">Research</a></li>
+        <li><a href="projects.html" class="hide-sm">Projects</a></li>
+        <li><a href="experience.html">Experience</a></li>
+        <li><a href="writing.html" class="active hide-sm">Writing</a></li>
+        <li><a href="people.html" class="hide-sm">People</a></li>
+        <li><a href="bookshelf.html" class="hide-sm">Bookshelf</a></li>
+        <li><label class="toggle-switch" aria-label="Toggle dark mode"><input type="checkbox" id="themeCheck" /><span class="toggle-track"><span class="toggle-thumb"></span></span></label></li>
+      </ul>
+      <button class="nav-menu-btn" id="menuBtn" aria-label="Menu"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="2" y1="5" x2="16" y2="5"/><line x1="2" y1="9" x2="16" y2="9"/><line x1="2" y1="13" x2="16" y2="13"/></svg></button>
+    </div>
+  </nav>
+
+  <div class="nav-drawer" id="navDrawer">
+    <ul>
+      <li><a href="research.html">Research</a></li>
+      <li><a href="projects.html">Projects</a></li>
+      <li><a href="experience.html">Experience</a></li>
+      <li><a href="writing.html" class="active">Writing</a></li>
+      <li><a href="people.html">People</a></li>
+      <li><a href="bookshelf.html">Bookshelf</a></li>
+    </ul>
+  </div>
+
+  <main>
+
+    <a href="writing.html" class="back-link">← Writing</a>
+
+    <div class="post-header">
+      <h1 class="post-title">Lens: structured error analysis for ML models</h1>
+      <div class="post-byline">Akarsh Upadhyay &nbsp;·&nbsp; Claude Code &nbsp;·&nbsp; May 2026</div>
+    </div>
+
+    <!-- Summary diagram -->
+    <svg class="summary-diagram" viewBox="0 0 720 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Lens pipeline summary">
+      <style>
+        .sd-box { fill: none; stroke: var(--border, #3a3a35); stroke-width: 1; rx: 2; }
+        .sd-label { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 500; fill: var(--text, #e8e6df); }
+        .sd-sub { font-family: 'Inter', sans-serif; font-size: 9.5px; fill: var(--text-3, #7a786f); }
+        .sd-num { font-family: 'Inter', sans-serif; font-size: 9px; font-weight: 600; fill: var(--accent, #b5a98a); letter-spacing: 0.06em; }
+        .sd-arrow { stroke: var(--border, #3a3a35); stroke-width: 1; fill: none; }
+        .sd-stat { font-family: 'Inter', sans-serif; font-size: 17px; font-weight: 500; fill: var(--text, #e8e6df); }
+        .sd-stat-sub { font-family: 'Inter', sans-serif; font-size: 8.5px; fill: var(--text-3, #7a786f); text-transform: uppercase; letter-spacing: 0.07em; }
+      </style>
+      <!-- Step 1: Train -->
+      <rect x="10" y="30" width="130" height="140" rx="2" class="sd-box"/>
+      <text x="18" y="52" class="sd-num">01</text>
+      <text x="18" y="70" class="sd-label">Train &amp; collect</text>
+      <text x="18" y="86" class="sd-label">failures</text>
+      <text x="18" y="108" class="sd-sub">ResNet-18 on CIFAR-10</text>
+      <text x="18" y="122" class="sd-sub">3 epochs, no augment</text>
+      <text x="18" y="145" class="sd-stat">150</text>
+      <text x="18" y="158" class="sd-stat-sub">failures sampled</text>
+      <!-- Arrow -->
+      <line x1="140" y1="100" x2="158" y2="100" class="sd-arrow"/>
+      <polygon points="158,96 166,100 158,104" fill="var(--border, #3a3a35)"/>
+      <!-- Step 2: Hypothesize -->
+      <rect x="166" y="30" width="130" height="140" rx="2" class="sd-box"/>
+      <text x="174" y="52" class="sd-num">02</text>
+      <text x="174" y="70" class="sd-label">Generate</text>
+      <text x="174" y="86" class="sd-label">hypotheses</text>
+      <text x="174" y="108" class="sd-sub">qwen3-vl:8b via Ollama</text>
+      <text x="174" y="122" class="sd-sub">3-part structured answer</text>
+      <text x="174" y="145" class="sd-stat">150</text>
+      <text x="174" y="158" class="sd-stat-sub">hypotheses (local)</text>
+      <!-- Arrow -->
+      <line x1="296" y1="100" x2="314" y2="100" class="sd-arrow"/>
+      <polygon points="314,96 322,100 314,104" fill="var(--border, #3a3a35)"/>
+      <!-- Step 3: Cluster -->
+      <rect x="322" y="30" width="130" height="140" rx="2" class="sd-box"/>
+      <text x="330" y="52" class="sd-num">03</text>
+      <text x="330" y="70" class="sd-label">Cluster 3</text>
+      <text x="330" y="86" class="sd-label">dimensions</text>
+      <text x="330" y="108" class="sd-sub">bge-base-en-v1.5 + KMeans</text>
+      <text x="330" y="122" class="sd-sub">data / visual cause / fix</text>
+      <text x="330" y="145" class="sd-stat">84</text>
+      <text x="330" y="158" class="sd-stat-sub">data quality flags</text>
+      <!-- Arrow -->
+      <line x1="452" y1="100" x2="470" y2="100" class="sd-arrow"/>
+      <polygon points="470,96 478,100 470,104" fill="var(--border, #3a3a35)"/>
+      <!-- Step 4: Review -->
+      <rect x="478" y="30" width="130" height="140" rx="2" class="sd-box"/>
+      <text x="486" y="52" class="sd-num">04</text>
+      <text x="486" y="70" class="sd-label">Human review</text>
+      <text x="486" y="86" class="sd-label">&amp; dashboard</text>
+      <text x="486" y="108" class="sd-sub">agree / disagree / skip</text>
+      <text x="486" y="122" class="sd-sub">ground truth for clusters</text>
+      <text x="486" y="145" class="sd-stat">3</text>
+      <text x="486" y="158" class="sd-stat-sub">top fix clusters</text>
+      <!-- Outcome box -->
+      <rect x="624" y="56" width="86" height="88" rx="2" class="sd-box" stroke-dasharray="4 3"/>
+      <text x="667" y="88" text-anchor="middle" class="sd-sub">targeted</text>
+      <text x="667" y="101" text-anchor="middle" class="sd-sub">augmentation</text>
+      <text x="667" y="114" text-anchor="middle" class="sd-sub">candidates</text>
+      <text x="667" y="130" text-anchor="middle" class="sd-sub">for iteration 2</text>
+      <line x1="608" y1="100" x2="622" y2="100" class="sd-arrow" stroke-dasharray="4 3"/>
+      <polygon points="622,96 630,100 622,104" fill="var(--border, #3a3a35)"/>
+    </svg>
+
+    <div class="post-body">
+
+      <p class="section-heading" style="margin-top: 0;">Where this came from</p>
+
+      <p>The habit that's stuck with me from working at Enterpret, Zomato, and Microsoft is doing proper error analysis before reaching for the usual levers — tuning hyperparameters, trying augmentations, scaling data. Not looking at aggregate metrics, but actually opening a spreadsheet with the raw examples and predictions, writing a hypothesis for each failure, and then stepping back to find patterns. It's slow and manual, but it consistently changes your understanding of what the problem actually is. Alexandru Burlacu <a href="https://alexandruburlacu.github.io/posts/2021-07-26-ml-error-analysis" target="_blank">makes a similar point</a>: reducing a model to a single scalar forfeits too much information about where and why it's failing.</p>
+
+      <p>Lens is an attempt to automate that manual loop — using a vision-language model to generate structured per-failure hypotheses, and then clustering those hypotheses to surface patterns. The demo here uses an image classifier, but the approach is meant to be general across modalities and problem types. The scope of v1 is deliberately narrow: understand the failures on the validation set. Closing the loop back into training is the plan for later iterations.</p>
+
+      <p><em>Note: the LLM-generated hypotheses in this experiment have not all been manually verified by me. I am currently going through the results, validating them, and improving the prompts. This post will be updated as that work progresses.</em></p>
+
+      <p class="section-heading">What error analysis means here</p>
+
+      <p>When we say error analysis, we mean something specific. For each misclassified example, we want to answer three questions. These questions came from the first attempt at using an LLM to understand patterns of model mistakes — iterating on what to ask until the answers were actually useful for diagnosis. They are not fixed — someone coming from a different domain or with a different mental model of failures would likely frame them differently. The right questions depend on what you already know about your data and what kind of action you want to take.</p>
+
+      <p><strong>1. Is there a data quality issue?</strong> By data quality we mean: is this image ambiguous, heavily cropped, or otherwise problematic in a way that's independent of the model? The main tag here is <em>ambiguous_image</em> — the image itself is hard, a human would also struggle. A second tag, <em>model_error</em>, covers cases where the image seems fine and the model just got it wrong. There is also an <em>annotation_issue</em> tag for suspected mislabels, but manual review suggests the VLM overcalls this — see the appendix.</p>
+
+      <p>The <em>ambiguous_image</em> tag is worth paying attention to beyond just flagging a data quality problem. Because these are images a human would also find hard, they carry a signal similar to what the visual cause dimension surfaces — they tell you something about the kinds of scenes and conditions the model is not equipped to handle. Looking at what makes those images ambiguous (unusual crops, texture overlap, low resolution) is itself a guide to what training augmentations might help.</p>
+
+      <p><strong>2. What visual property caused the confusion?</strong> Not just "wrong class" — but what specific visual characteristic made the model pick the wrong one. Background texture bleed, partial occlusion, unusual crop, low contrast between object and background, etc.</p>
+
+      <p><strong>3. What could help?</strong> Concretely — what augmentation, data collection strategy, or labeling change would address this specific failure?</p>
+
+      <p>These three dimensions are independent. The same failure can be an ambiguous image <em>and</em> have a clear visual cause <em>and</em> suggest a specific augmentation. Keeping them separate matters because they point at different kinds of action.</p>
+
+      <p class="section-heading">The pipeline</p>
+
+      <p>Here is how each step fits together and why each one is necessary:</p>
+
+      <div class="pipeline-block">
+        <div class="pipeline-row">
+          <div class="pipeline-num">01</div>
+          <div class="pipeline-content">
+            <strong>Train and collect failures</strong>
+            <p>Fine-tune a model and save every misclassification with top-3 predictions and confidence scores. Without a structured failure set, there is nothing to analyze. For this experiment we used ResNet-18 (ImageNet pretrained) on CIFAR-10, fine-tuned for 3 epochs with AdamW — FC head at lr=1e-3, backbone at lr=1e-4, no augmentation. This is the baseline; augmentation comes in iteration 2 after the analysis tells us what to target.</p>
+          </div>
+        </div>
+        <div class="pipeline-row">
+          <div class="pipeline-num">02</div>
+          <div class="pipeline-content">
+            <strong>Generate a hypothesis per failure</strong>
+            <p>Each failure image goes to a local vision-language model (qwen3-vl:8b via Ollama) along with the true label and predicted label. The prompt asks the three questions above and expects a structured three-part response. This runs fully locally — no external API calls, no data leaving the machine.</p>
+            <p style="margin-top: 10px;">The hypothesis formulation is the most important and most fragile step. The three questions here are generic and were arrived at by iterating on what actually produces useful diagnostic signal. The right questions depend heavily on the domain — someone doing error analysis on medical imaging failures will ask very different things than someone debugging a recommendation system. The current prompts are a starting point; tuning them for a specific domain is likely where the biggest quality gains are. You can see the exact prompts in the <a href="https://github.com/uakarsh/lens" target="_blank">GitHub repo</a>.</p>
+          </div>
+        </div>
+        <div class="pipeline-row">
+          <div class="pipeline-num">03</div>
+          <div class="pipeline-content">
+            <strong>Cluster each dimension independently</strong>
+            <p>Rather than treating the hypothesis as a single blob of text, we embed and cluster each of the three dimensions separately using BAAI/bge-base-en-v1.5 sentence embeddings and KMeans. The data quality dimension gets compressed to a one-sentence verdict before embedding — if you embed the raw verbose text, the clusters end up grouping by which class pair was confused rather than what kind of data issue it is.</p>
+            <p style="margin-top: 10px;">Cluster count is selected via silhouette score over k=15–30, with a minimum cluster size of 15 to filter noise. The clustering parameters (k range, minimum size) were decided empirically and are not formally tuned — this is an area that would benefit from more systematic evaluation.</p>
+          </div>
+        </div>
+        <div class="pipeline-row">
+          <div class="pipeline-num">04</div>
+          <div class="pipeline-content">
+            <strong>Review UI and dashboard</strong>
+            <p>A FastAPI server where a reviewer can page through sampled failures, see the image alongside its hypothesis and cluster tags, and record agree / disagree / skip verdicts. The human review step is what gives the pipeline ground truth — without it, there is no way to know how much to trust the automated output. The dashboard shows cluster summaries across all three dimensions with links back to individual failures.</p>
+          </div>
+        </div>
+      </div>
+
+      <img src="assets/lens-review.png" alt="Lens review UI showing a failure image with hypothesis and cluster tags" class="post-img" />
+      <p class="post-img-caption">Review UI — failure image with top-3 predictions, 3-part VLM hypothesis, and dimension cluster tags. Keyboard shortcuts for agree / disagree / skip.</p>
+
+      <p class="section-heading">What we found on CIFAR-10</p>
+
+      <p>Per-class accuracy is uneven. Cat sits at 61.9% F1, dog at 70.0% — noticeably behind the rest. Both show val loss rising after epoch 2, which initially looked like overfitting. We tried a few things: adding dropout on the FC head, a two-phase training schedule (freeze backbone first, then unfreeze), and a lower backbone LR. None of them helped — accuracy dropped in each case. It's possible the val loss rise is reflecting something about the inherent cat/dog boundary in CIFAR-10 rather than a training issue, but we haven't ruled everything out. The augmentation experiments planned for the next iteration should give a clearer picture.</p>
+
+      <table class="data-table">
+        <thead>
+          <tr><th>Class</th><th>Precision</th><th>Recall</th><th>F1</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>airplane</td><td>83.1%</td><td>81.8%</td><td>82.5%</td></tr>
+          <tr><td>automobile</td><td>86.5%</td><td>88.1%</td><td>87.3%</td></tr>
+          <tr><td>bird</td><td>75.9%</td><td>71.1%</td><td>73.4%</td></tr>
+          <tr><td>cat</td><td>61.9%</td><td>61.9%</td><td>61.9%</td></tr>
+          <tr><td>deer</td><td>73.8%</td><td>77.2%</td><td>75.5%</td></tr>
+          <tr><td>dog</td><td>70.8%</td><td>69.2%</td><td>70.0%</td></tr>
+          <tr><td>frog</td><td>81.5%</td><td>87.1%</td><td>84.2%</td></tr>
+          <tr><td>horse</td><td>84.3%</td><td>80.8%</td><td>82.5%</td></tr>
+          <tr><td>ship</td><td>86.8%</td><td>89.7%</td><td>88.2%</td></tr>
+          <tr><td>truck</td><td>85.6%</td><td>83.4%</td><td>84.5%</td></tr>
+        </tbody>
+      </table>
+
+      <p>We sampled 150 validation failures (15 per class) for the VLM analysis. A few things to keep in mind before reading the numbers: this is purely an analysis of validation failures — we haven't looked at the training set at all. A single failure can be tagged with multiple issues; data quality and visual cause and a fix suggestion are not mutually exclusive. And the numbers downstream are only as reliable as each step that produced them — the VLM hypothesis quality, the accuracy of the one-sentence compression before embedding, and the quality of the sentence embeddings themselves are all unvalidated. Treat the counts as directional signals, not ground truth.</p>
+
+      <p>With that said: of the 150 failures, the VLM tagged <strong>68 as ambiguous_image</strong> — the image itself looks hard, a human would also struggle. Unusual crops, low contrast, background texture bleeding into the object. The remaining 66 were tagged model_error, meaning the image seems reasonable and the error appears to be a model gap rather than a data problem. The VLM also produced 16 annotation_issue flags, but manual review suggests most of those are wrong — see the appendix.</p>
+
+      <p>The visual cause clusters gave a more specific picture of what the model is struggling with:</p>
+
+      <div class="callout">
+        <p><strong>14 failures — dark foreground objects hiding discriminative features.</strong> The model struggled when a dark object in the foreground (a shadow, another animal, a fence) partially obscured the key part of the image that would distinguish one class from another. For example, a cat whose face is half-hidden behind a dark surface, leaving mostly fur texture visible — which overlaps heavily with dog fur.</p>
+        <p style="margin-top: 12px;"><strong>9 failures — background texture closely matching the object texture.</strong> Cases where the background and the subject share similar color or texture patterns. A frog on a similarly-green leaf, or a horse against a brown earthy field — the model doesn't have a clean foreground/background separation to rely on.</p>
+        <p style="margin-top: 12px;"><strong>8 failures — ship hull cropped to show only the lower portion.</strong> When a ship image is cropped tightly to show just the lower hull against water, the visual profile — a flat dark mass above a lighter surface — ends up looking similar to an airplane viewed from below. The model had no other context to disambiguate.</p>
+      </div>
+
+      <p>The fix clusters suggested concrete augmentations worth trying in the next training run:</p>
+
+      <table class="data-table">
+        <thead>
+          <tr><th>Fix cluster</th><th>Failures</th><th>What it means</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Partial head occlusion augmentation</td><td>10</td><td>Randomly mask the head or upper region of animals during training, so the model learns to rely on body shape and texture rather than facial features alone</td></tr>
+          <tr><td>Tail section cropping augmentation</td><td>7</td><td>Apply crops that cut off the rear section of vehicles and animals, training the model to identify classes from partial views rather than assuming a complete object is visible</td></tr>
+          <tr><td>Background texture augmentation</td><td>7</td><td>Apply color jitter and texture augmentation to reduce the model's reliance on background cues — specifically targeting cases where the background and subject share similar texture or color</td></tr>
+        </tbody>
+      </table>
+
+      <img src="assets/lens-dashboard.png" alt="Lens cluster dashboard showing data issues and visual cause clusters" class="post-img" />
+      <p class="post-img-caption">Cluster dashboard — data issues spotlight at the top, followed by visual cause and fix cluster grids. Each row links back to the review UI for that failure.</p>
+
+      <p class="section-heading">Where the VLM got it right, almost right, and slightly wrong</p>
+
+      <div class="failure-grid">
+        <div class="failure-card">
+          <img src="assets/lens-failure-9609.png" alt="CIFAR-10 test image 9609: automobile misclassified as frog" />
+          <div class="failure-card-label">
+            <div class="fc-classes">automobile → frog (conf 94%)</div>
+            <div class="fc-verdict">correct: green background drives prediction</div>
+          </div>
+        </div>
+        <div class="failure-card">
+          <img src="assets/lens-failure-4546.png" alt="CIFAR-10 test image 4546: bird misclassified as airplane" />
+          <div class="failure-card-label">
+            <div class="fc-classes">bird → airplane (conf 80%)</div>
+            <div class="fc-verdict">almost right: identified confusion, wrong specific reason</div>
+          </div>
+        </div>
+        <div class="failure-card">
+          <img src="assets/lens-failure-7112.png" alt="CIFAR-10 test image 7112: bird misclassified as airplane" />
+          <div class="failure-card-label">
+            <div class="fc-classes">bird → airplane (conf 81%)</div>
+            <div class="fc-verdict">almost right: identified confusion, wrong specific reason</div>
+          </div>
+        </div>
+        <div class="failure-card">
+          <img src="assets/lens-failure-8892.png" alt="CIFAR-10 test image 8892: ship misclassified as airplane" />
+          <div class="failure-card-label">
+            <div class="fc-classes">ship → airplane (conf 79%)</div>
+            <div class="fc-verdict">slightly wrong: right structure, wrong background detail</div>
+          </div>
+        </div>
+      </div>
+
+      <p><strong>Automobile → frog (9609).</strong> The car is bright green against a saturated green background. The hypothesis correctly identifies that the background color is what's driving the prediction — not anything about the car itself. The fix follows directly: color jitter, more green non-frog backgrounds in training. This is the clearest example of the pipeline producing something actionable.</p>
+
+      <p><strong>Bird → airplane (4546, 7112).</strong> Both are birds in flight against open sky — you can see immediately why the model predicted airplane. The VLM correctly flags the bird/airplane boundary as the issue. But the specific reason it gives is wrong: 4546's hypothesis says the wings are "folded or tucked" when they are clearly spread, and 7112's says the head and tail are cropped out when both are visible. The top-level confusion is right; the causal detail is fabricated.</p>
+
+      <p><strong>Ship → airplane (8892).</strong> That's an aircraft carrier. The hypothesis identifies the right structural cause — the flat deck and cropped masts creating a shape that reads like an airplane fuselage and tail. But it describes the background as "dark, textured, gradient of dark blue to black" when it's plainly a grey sky. The structural reasoning holds up; the background description doesn't match the image.</p>
+
+      <p>Three tiers visible across these examples: a hypothesis that's fully correct and actionable, hypotheses that identify the right failure class but fabricate the specific visual detail, and a hypothesis where the structural reasoning is sound but a secondary detail is wrong. The appendix covers the fourth tier — where the entire premise is invented.</p>
+
+      <p class="section-heading">Considerations if you want to use this in production</p>
+
+      <p>The pipeline as built is a proof of concept. Assuming LLM inference latency is not a blocking constraint, the things that actually determine the quality of the output are the accuracy of each individual step — and right now none of them are validated end-to-end.</p>
+
+      <p><strong>Hypothesis quality</strong> depends on the prompt and the VLM. The prompts here are generic and were written without domain expertise in CIFAR-10 failure modes. For a real use case — say, a medical imaging classifier or a recommendation system — the prompts would need to be written by someone with direct experience doing error analysis in that domain. The VLM (qwen3-vl:8b) is also a relatively small model; larger or more capable VLMs would likely produce better hypotheses.</p>
+
+      <p><strong>Compression quality</strong> (collapsing the verbose data quality section to a one-sentence verdict before embedding) is also unvalidated. It's a step we introduced to prevent embeddings from clustering by class confusion rather than data quality type, but how much signal is lost in the compression is unknown. It can also be removed entirely by editing the original hypothesis prompt to ask for a concise one-sentence data quality verdict directly — which would eliminate the compression step and its associated error surface.</p>
+
+      <p><strong>Embedding and clustering quality</strong> determine whether the cluster labels are meaningful. We use BAAI/bge-base-en-v1.5 with KMeans and silhouette-selected k. The clusters look reasonable on inspection, but there's no automated evaluation of cluster purity or label accuracy.</p>
+
+      <p>The human review step is precisely there to address this — a reviewer marking hypotheses as agree/disagree/skip is the ground truth signal that lets you calibrate how much to trust the automated output. Right now those verdicts are stored but not yet fed back into the pipeline. Wiring that up — and using it to filter noisy clusters before they surface as recommendations — is the most important next step before using this for anything beyond exploration.</p>
+
+      <p>On cadence: at production scale you'd sample a fixed number of failures per class after each deployment, run the analysis, and re-cluster periodically rather than on every failure. The annotation_issue tag is the most directly actionable output — those val set examples are worth a human look to confirm the label, and if confirmed wrong, to check whether the same pattern exists in the training split.</p>
+
+      <p>The prompts and the code are on GitHub. The experiment results — training logs, cluster assignments, and human feedback for the baseline run — are checked in alongside the scripts.</p>
+
+      <p class="section-heading">Appendix: hallucinations and what needs work</p>
+
+      <p>The manual review so far has surfaced a real problem: the VLM hallucinates image content with some frequency. A few patterns I've noticed going through the results:</p>
+
+      <p><strong>Invented visual details.</strong> For a ship misclassified as truck (image index 1685), the hypothesis describes a <em>"uniform blue background"</em> and builds its entire causal chain around that detail — the shape of the ship's bow against the blue, the resemblance to a truck's front bumper. Look at the image:</p>
+
+      <div class="failure-grid">
+        <div class="failure-card">
+          <img src="assets/lens-failure-1685.png" alt="CIFAR-10 test image 1685: ship misclassified as truck" />
+          <div class="failure-card-label">
+            <div class="fc-classes">ship → truck (conf 45%)</div>
+            <div class="fc-verdict">hypothesis: "uniform blue background" — not present</div>
+          </div>
+        </div>
+      </div>
+
+      <p>The background is dark grey rock/gravel, not blue. The VLM fabricated the key detail and then reasoned from it coherently. This is the worst-case failure mode — not a vague hypothesis, but a confident wrong one with a plausible-sounding causal chain built on top of a hallucinated premise.</p>
+
+      <p><strong>Over-flagging annotation_issue.</strong> The VLM called automobile → dog (image index 4476) a labeling error — it described the image as <em>"clearly a toy car"</em> with <em>"visible wheels, rectangular body, and steering wheel"</em> and concluded the dog label was mislabeled:</p>
+
+      <div class="failure-grid">
+        <div class="failure-card">
+          <img src="assets/lens-failure-4476.png" alt="CIFAR-10 test image 4476: automobile misclassified as dog" />
+          <div class="failure-card-label">
+            <div class="fc-classes">automobile → dog (conf 72%)</div>
+            <div class="fc-verdict">flagged annotation_issue — likely wrong</div>
+          </div>
+        </div>
+      </div>
+
+      <p>The label is automobile, the model predicted dog at 72% — that's a genuine model failure. The VLM appears to be pattern-matching on the class pair (automobile predicted as dog sounds implausible, so it must be mislabeled) rather than actually reading the image. Of the 16 annotation_issue flags in this run, I suspect most will not hold up.</p>
+
+      <p>This is the central challenge with using a small VLM (qwen3-vl:8b) for this kind of task. The model produces fluent, specific-sounding hypotheses that are structured exactly as asked — but the image grounding is unreliable. It may describe textures, shapes, or colors that are not actually present, and because the output sounds specific and internally consistent, it's easy to miss that it's confabulated.</p>
+
+      <p>The fix is not obvious. A few directions worth exploring:</p>
+
+      <p><strong>Prompt engineering.</strong> The current prompts ask for reasoning in one pass. Asking the model to first describe what it literally sees in the image — before reasoning about why the model was confused — might reduce hallucinated details by anchoring the hypothesis to the visual description step. Asking the model to express uncertainty explicitly ("I cannot tell if the background is...") might also help. These are hypotheses about prompting, not validated conclusions.</p>
+
+      <p><strong>Larger VLM.</strong> A larger model (e.g., qwen3-vl:72b, or a cloud-hosted multimodal model) would likely hallucinate less on the image description step. The tradeoff is inference cost and latency — the 8b model runs locally in a few seconds per image; a 72b model is 10x slower and either requires significant hardware or an external API call.</p>
+
+      <p><strong>Chain-of-thought grounding.</strong> Asking the model to describe specific regions of the image (top-left quadrant, foreground vs. background) before reasoning about the failure might produce more grounded hypotheses. This would also make it easier for a human reviewer to spot fabricated details, since the description step is separately verifiable.</p>
+
+      <p>Until the hypothesis quality is validated systematically, the cluster-level patterns should be treated as hypotheses to investigate rather than conclusions to act on. The human review step exists precisely to catch this — but it needs more coverage than three examples. I am continuing to work through the failures.</p>
+
+    </div>
+
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <p>© 2026 Akarsh Upadhyay</p>
+      <p><a href="mailto:akarshupadhyayabc@gmail.com">akarshupadhyayabc@gmail.com</a></p>
+    </div>
+  </footer>
+
+  <script src="theme.js"></script>
+</body>
+</html>
