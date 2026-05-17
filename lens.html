@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Lens — a human-in-the-loop error analysis tool for image classifiers. By Akarsh Upadhyay." />
+  <title>Lens: What's Actually Wrong With Your Model — Akarsh Upadhyay</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .post-header { margin-bottom: 56px; }
+    .post-title {
+      font-family: var(--font-display);
+      font-size: 2.4rem;
+      font-weight: 400;
+      line-height: 1.2;
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+    .post-byline {
+      font-family: var(--font-ui);
+      font-size: 0.68rem;
+      color: var(--text-3);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .post-body h2 {
+      font-family: var(--font-ui);
+      font-size: 0.63rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      margin-top: 52px;
+      margin-bottom: 20px;
+    }
+    .post-body p {
+      font-size: 1rem;
+      line-height: 1.9;
+      color: var(--text-2);
+      margin-bottom: 20px;
+    }
+    .post-body p:last-child { margin-bottom: 0; }
+    .post-body strong { color: var(--text); font-weight: 500; }
+    .post-body a { color: var(--accent); }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 28px 0;
+      font-family: var(--font-ui);
+      font-size: 0.78rem;
+    }
+    .data-table th {
+      text-align: left;
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-3);
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-size: 0.62rem;
+    }
+    .data-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-2);
+      line-height: 1.5;
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table td:first-child { color: var(--text); }
+    .callout {
+      border-left: 2px solid var(--border);
+      padding: 4px 0 4px 20px;
+      margin: 32px 0;
+    }
+    .callout p {
+      font-size: 0.95rem;
+      font-style: italic;
+      color: var(--text-3);
+      margin-bottom: 0;
+    }
+    .back-link {
+      display: inline-block;
+      font-family: var(--font-ui);
+      font-size: 0.65rem;
+      color: var(--text-3);
+      text-decoration: none;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 48px;
+      transition: color var(--ease);
+    }
+    .back-link:hover { color: var(--accent); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+  <nav id="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-home">Akarsh Upadhyay</a>
+      <ul class="nav-links">
+        <li><a href="research.html" class="hide-sm">Research</a></li>
+        <li><a href="projects.html" class="hide-sm">Projects</a></li>
+        <li><a href="experience.html">Experience</a></li>
+        <li><a href="writing.html" class="active hide-sm">Writing</a></li>
+        <li><a href="people.html" class="hide-sm">People</a></li>
+        <li><a href="bookshelf.html" class="hide-sm">Bookshelf</a></li>
+        <li><label class="toggle-switch" aria-label="Toggle dark mode"><input type="checkbox" id="themeCheck" /><span class="toggle-track"><span class="toggle-thumb"></span></span></label></li>
+      </ul>
+      <button class="nav-menu-btn" id="menuBtn" aria-label="Menu"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="2" y1="5" x2="16" y2="5"/><line x1="2" y1="9" x2="16" y2="9"/><line x1="2" y1="13" x2="16" y2="13"/></svg></button>
+    </div>
+  </nav>
+
+  <div class="nav-drawer" id="navDrawer">
+    <ul>
+      <li><a href="research.html">Research</a></li>
+      <li><a href="projects.html">Projects</a></li>
+      <li><a href="experience.html">Experience</a></li>
+      <li><a href="writing.html" class="active">Writing</a></li>
+      <li><a href="people.html">People</a></li>
+      <li><a href="bookshelf.html">Bookshelf</a></li>
+    </ul>
+  </div>
+
+  <main>
+
+    <a href="writing.html" class="back-link">← Writing</a>
+
+    <div class="post-header">
+      <h1 class="post-title">Lens: What's Actually Wrong With Your Model</h1>
+      <div class="post-byline">Akarsh Upadhyay &nbsp;·&nbsp; May 2026</div>
+    </div>
+
+    <div class="post-body">
+
+      <h2>The problem</h2>
+
+      <p>When a model fails, the default workflow is: look at the accuracy number, squint at some confusion matrices, and guess what's wrong. Maybe run a few more epochs. Maybe try a different learning rate. The thing you rarely do is actually look at the failures in a structured way, because that's slow and it doesn't obviously scale.</p>
+
+      <p>The bigger issue is that model failures aren't all the same kind of thing. Some failures happen because the training data is bad — mislabeled images, ambiguous images that a human would also get wrong. Some happen because the model hasn't seen a particular visual pattern during training. And some happen because the task is genuinely hard for that architecture. These require completely different fixes, and treating them the same wastes a lot of time.</p>
+
+      <h2>What Lens does</h2>
+
+      <p>Lens is a small tool I built to make this analysis more systematic. The pipeline has a few stages:</p>
+
+      <p><strong>Train and collect failures.</strong> Fine-tune a model, then collect every misclassification with the top-3 predictions and confidence scores. For the initial experiment I used ResNet-18 (ImageNet pretrained) on CIFAR-10, 3 epochs, no augmentation.</p>
+
+      <p><strong>Generate hypotheses per failure.</strong> For each failure image, send it to a local vision-language model (qwen3-vl:8b via Ollama) and ask three specific questions: Is there a data quality issue here? What visual property caused the confusion? What augmentation or data change would help? The model gets the image plus the true label and predicted label as context. This runs locally — no external API calls, no data leaving the machine.</p>
+
+      <p><strong>Cluster each dimension independently.</strong> Instead of treating the hypothesis as one blob of text, I split it into three separate dimensions and cluster each one independently using sentence embeddings (BAAI/bge-base-en-v1.5) and KMeans. The data quality dimension gets compressed to a one-sentence verdict before embedding — otherwise the cluster model just groups by which class pair was confused rather than what kind of data problem it is.</p>
+
+      <p><strong>Review UI and dashboard.</strong> A FastAPI server with a simple UI for paging through failures, recording agree/disagree/skip verdicts, and looking at the cluster breakdowns for each dimension.</p>
+
+      <h2>What we found on CIFAR-10</h2>
+
+      <p>The model ended up at decent but uneven per-class accuracy. The two weakest classes were cat (61.9% F1) and dog (70.0% F1). The initial guess was overfitting — the val loss for these two classes rises after epoch 2. After trying dropout, two-phase freezing, and lower backbone LRs, and watching all of them hurt accuracy, the clearer explanation is that cat/dog boundary ambiguity is a property of the dataset, not a training problem. The model is doing about as well as it can given what the images look like.</p>
+
+      <table class="data-table">
+        <thead>
+          <tr><th>Class</th><th>Precision</th><th>Recall</th><th>F1</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>airplane</td><td>83.1%</td><td>81.8%</td><td>82.5%</td></tr>
+          <tr><td>automobile</td><td>86.5%</td><td>88.1%</td><td>87.3%</td></tr>
+          <tr><td>bird</td><td>75.9%</td><td>71.1%</td><td>73.4%</td></tr>
+          <tr><td>cat</td><td>61.9%</td><td>61.9%</td><td>61.9%</td></tr>
+          <tr><td>deer</td><td>73.8%</td><td>77.2%</td><td>75.5%</td></tr>
+          <tr><td>dog</td><td>70.8%</td><td>69.2%</td><td>70.0%</td></tr>
+          <tr><td>frog</td><td>81.5%</td><td>87.1%</td><td>84.2%</td></tr>
+          <tr><td>horse</td><td>84.3%</td><td>80.8%</td><td>82.5%</td></tr>
+          <tr><td>ship</td><td>86.8%</td><td>89.7%</td><td>88.2%</td></tr>
+          <tr><td>truck</td><td>85.6%</td><td>83.4%</td><td>84.5%</td></tr>
+        </tbody>
+      </table>
+
+      <p>The more useful result came from the error analysis on 150 sampled failures (15 per class). Of those, <strong>84 were actionable data quality issues</strong> — 68 images a human would also struggle with (cropped so the key feature is missing, background texture bleeding into the object) and 16 that appear to be outright labeling errors. The other 66 were genuine model errors on reasonable images.</p>
+
+      <p>That split matters. If you're trying to improve this model, the first thing to do is fix the data, not the training. Sixteen mislabeled images per 150 failures is a high enough rate that cleaning the dataset will move accuracy more reliably than any training change.</p>
+
+      <p>The visual cause clusters gave a more concrete picture of what's hard:</p>
+
+      <div class="callout">
+        <p>14 failures: dark foreground objects hiding discriminative features. 9 failures: background texture matching object texture closely. 8 failures: ship hull cropped to expose only the lower portion, which looks like the underside of an airplane.</p>
+      </div>
+
+      <p>And the fix clusters pointed at specific augmentations to try:</p>
+
+      <table class="data-table">
+        <thead>
+          <tr><th>Fix cluster</th><th>Failures</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Partial head occlusion augmentation</td><td>10</td></tr>
+          <tr><td>Tail section cropping augmentation</td><td>7</td></tr>
+          <tr><td>Background texture augmentation (color jitter + texture aug)</td><td>7</td></tr>
+        </tbody>
+      </table>
+
+      <h2>How this would work in production</h2>
+
+      <p>The main overhead in the current setup is the VLM inference step — running qwen3-vl:8b locally on 150 images takes around 10–15 minutes on a laptop GPU. At production scale you'd want to run this on a subset of failures: sample a fixed number per class, run the analysis, and re-cluster periodically (daily or after each deployment).</p>
+
+      <p>The more important design question is what you do with the output. The annotation_issue tag is immediately actionable — those images are candidates for relabeling or removal and can be queued for a human review step without any additional analysis. The fix clusters are inputs to augmentation strategy for the next training iteration. The visual cause clusters are useful for debugging and for writing evaluation suites — if you know "partial occlusion by dark textured elements" is a failure mode, you can construct test cases that specifically stress that.</p>
+
+      <p>The human review UI is there to close the loop — a reviewer can quickly go through the sampled failures, mark which hypotheses are correct, and feed that signal back into the next round. Right now the verdicts are stored but not used to re-weight the clustering. That's one of the straightforward improvements.</p>
+
+      <h2>What's next</h2>
+
+      <p>The immediate next step is running a second training iteration with the augmentations from the fix clusters (head occlusion, background texture, crop augmentation) and comparing per-class F1 against the baseline. That's the direct test of whether the analysis actually translates to better model behavior.</p>
+
+      <p>A few other things that would make this more useful: using human review verdicts to filter noisy hypotheses before clustering; adding a comparison view between two training runs; and making it easier to add new datasets and model architectures without rewriting the pipeline. The current code is fairly tightly coupled to CIFAR-10 and ResNet-18.</p>
+
+      <p>The code is on GitHub. The experiment results — training logs, cluster assignments, and human feedback — are checked in alongside the scripts.</p>
+
+    </div>
+
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <p>© 2026 Akarsh Upadhyay</p>
+      <p><a href="mailto:akarshupadhyayabc@gmail.com">akarshupadhyayabc@gmail.com</a></p>
+    </div>
+  </footer>
+
+  <script src="theme.js"></script>
+</body>
+</html>
