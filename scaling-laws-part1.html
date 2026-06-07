@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Deriving Chinchilla scaling laws from scratch on 3-digit addition — the wrong turns, the bugs, and a locked config. Part 1. By Akarsh Upadhyay." />
+  <title>Deriving Chinchilla scaling laws from scratch, Part 1 — Akarsh Upadhyay</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .post-header { margin-bottom: 56px; }
+    .post-title {
+      font-family: var(--font-display);
+      font-size: 2.4rem;
+      font-weight: 400;
+      line-height: 1.2;
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+    .post-byline {
+      font-family: var(--font-ui);
+      font-size: 0.68rem;
+      color: var(--text-3);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .post-body h2 {
+      font-family: var(--font-ui);
+      font-size: 0.63rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      margin-top: 52px;
+      margin-bottom: 20px;
+    }
+    .post-body p {
+      font-size: 1rem;
+      line-height: 1.9;
+      color: var(--text-2);
+      margin-bottom: 20px;
+    }
+    .post-body p:last-child { margin-bottom: 0; }
+    .post-body strong { color: var(--text); font-weight: 500; }
+    .post-body a { color: var(--accent); }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 28px 0;
+      font-family: var(--font-ui);
+      font-size: 0.78rem;
+    }
+    .data-table th {
+      text-align: left;
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-3);
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-size: 0.62rem;
+    }
+    .data-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-2);
+      line-height: 1.5;
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table td:first-child { color: var(--text); }
+    .callout {
+      border-left: 2px solid var(--border);
+      padding: 4px 0 4px 20px;
+      margin: 32px 0;
+    }
+    .callout p {
+      font-size: 0.95rem;
+      font-style: italic;
+      color: var(--text-3);
+      margin-bottom: 0;
+    }
+    .back-link {
+      display: inline-block;
+      font-family: var(--font-ui);
+      font-size: 0.65rem;
+      color: var(--text-3);
+      text-decoration: none;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 48px;
+      transition: color var(--ease);
+    }
+    .back-link:hover { color: var(--accent); text-decoration: none; }
+    .post-body .section-heading {
+      font-family: var(--font-body);
+      font-size: 1.15rem;
+      font-weight: 500;
+      color: var(--text);
+      margin-top: 52px;
+      margin-bottom: 18px;
+    }
+    .pipeline-block {
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      margin: 28px 0;
+      overflow: hidden;
+    }
+    .pipeline-row {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 0 20px;
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border);
+      align-items: start;
+    }
+    .pipeline-row:last-child { border-bottom: none; }
+    .pipeline-num {
+      font-family: var(--font-ui);
+      font-size: 0.62rem;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.06em;
+      padding-top: 3px;
+    }
+    .pipeline-content strong {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .pipeline-content p {
+      font-size: 0.88rem;
+      line-height: 1.75;
+      color: var(--text-2);
+      margin-bottom: 0;
+    }
+    .summary-diagram {
+      width: 100%;
+      margin: 36px 0 40px;
+      display: block;
+    }
+    .code-block {
+      font-family: 'Menlo', 'Monaco', 'Consolas', monospace;
+      font-size: 0.77rem;
+      background: var(--surface, rgba(0,0,0,0.15));
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 16px 20px;
+      margin: 24px 0;
+      overflow-x: auto;
+      line-height: 1.65;
+      color: var(--text-2);
+      white-space: pre;
+    }
+    .post-body code {
+      font-family: 'Menlo', 'Monaco', 'Consolas', monospace;
+      font-size: 0.82em;
+      background: var(--surface, rgba(0,0,0,0.1));
+      padding: 2px 5px;
+      border-radius: 2px;
+      color: var(--text);
+    }
+    .attempt-block {
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      margin: 20px 0;
+      overflow: hidden;
+    }
+    .attempt-header {
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+      padding: 14px 20px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .attempt-tag {
+      font-family: var(--font-ui);
+      font-size: 0.60rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: 2px;
+    }
+    .attempt-tag.failed {
+      color: #c0826a;
+      background: rgba(192,130,106,0.1);
+      border: 1px solid rgba(192,130,106,0.25);
+    }
+    .attempt-tag.worked {
+      color: #7aaa6a;
+      background: rgba(122,170,106,0.1);
+      border: 1px solid rgba(122,170,106,0.25);
+    }
+    .attempt-title {
+      font-family: var(--font-ui);
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text);
+    }
+    .attempt-body {
+      padding: 14px 20px 16px;
+    }
+    .attempt-body p {
+      font-size: 0.88rem !important;
+      line-height: 1.75 !important;
+      margin-bottom: 12px !important;
+    }
+    .attempt-body p:last-child { margin-bottom: 0 !important; }
+    .kept-dropped {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-top: 1px solid var(--border);
+    }
+    .kept, .dropped {
+      padding: 11px 20px;
+      font-family: var(--font-ui);
+      font-size: 0.80rem;
+      line-height: 1.6;
+      color: var(--text-2);
+    }
+    .kept { border-right: 1px solid var(--border); }
+    .kept strong, .dropped strong {
+      display: block;
+      font-size: 0.60rem !important;
+      font-family: var(--font-ui);
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--text-3) !important;
+      margin-bottom: 5px;
+      font-weight: 600 !important;
+    }
+  </style>
+</head>
+<body>
+
+  <nav id="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-home">Akarsh Upadhyay</a>
+      <ul class="nav-links">
+        <li><a href="research.html" class="hide-sm">Research</a></li>
+        <li><a href="projects.html" class="hide-sm">Projects</a></li>
+        <li><a href="experience.html" class="hide-sm">Experience</a></li>
+        <li><a href="writing.html" class="active hide-sm">Writing</a></li>
+        <li><a href="people.html" class="hide-sm">People</a></li>
+        <li><a href="bookshelf.html" class="hide-sm">Bookshelf</a></li>
+        <li><label class="toggle-switch" aria-label="Toggle dark mode"><input type="checkbox" id="themeCheck" /><span class="toggle-track"><span class="toggle-thumb"></span></span></label></li>
+      </ul>
+      <button class="nav-menu-btn" id="menuBtn" aria-label="Menu"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="2" y1="5" x2="16" y2="5"/><line x1="2" y1="9" x2="16" y2="9"/><line x1="2" y1="13" x2="16" y2="13"/></svg></button>
+    </div>
+  </nav>
+
+  <div class="nav-drawer" id="navDrawer">
+    <ul>
+      <li><a href="research.html">Research</a></li>
+      <li><a href="projects.html">Projects</a></li>
+      <li><a href="experience.html">Experience</a></li>
+      <li><a href="writing.html" class="active">Writing</a></li>
+      <li><a href="people.html">People</a></li>
+      <li><a href="bookshelf.html">Bookshelf</a></li>
+    </ul>
+  </div>
+
+  <main>
+
+    <a href="writing.html" class="back-link">← Writing</a>
+
+    <div class="post-header">
+      <h1 class="post-title">Deriving Chinchilla scaling laws from scratch — Part 1</h1>
+      <div class="post-byline">Akarsh Upadhyay &nbsp;·&nbsp; Claude Code &nbsp;·&nbsp; June 2026</div>
+    </div>
+
+    <!-- Summary diagram -->
+    <svg class="summary-diagram" viewBox="0 0 720 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Project pipeline: task design, fix training, architecture ablations, config locked">
+      <style>
+        .sd-box { fill: none; stroke: var(--border, #3a3a35); stroke-width: 1; }
+        .sd-label { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 500; fill: var(--text, #e8e6df); }
+        .sd-sub { font-family: 'Inter', sans-serif; font-size: 9.5px; fill: var(--text-3, #7a786f); }
+        .sd-num { font-family: 'Inter', sans-serif; font-size: 9px; font-weight: 600; fill: var(--accent, #b5a98a); letter-spacing: 0.06em; }
+        .sd-arrow { stroke: var(--border, #3a3a35); stroke-width: 1; fill: none; }
+        .sd-stat { font-family: 'Inter', sans-serif; font-size: 17px; font-weight: 500; fill: var(--text, #e8e6df); }
+        .sd-stat-sub { font-family: 'Inter', sans-serif; font-size: 8.5px; fill: var(--text-3, #7a786f); text-transform: uppercase; letter-spacing: 0.07em; }
+      </style>
+      <!-- Box 1: Task -->
+      <rect x="10" y="30" width="130" height="140" rx="2" class="sd-box"/>
+      <text x="18" y="52" class="sd-num">01</text>
+      <text x="18" y="70" class="sd-label">Task design</text>
+      <text x="18" y="108" class="sd-sub">3-digit addition</text>
+      <text x="18" y="122" class="sd-sub">char-level, vocab 14</text>
+      <text x="18" y="145" class="sd-stat">1M</text>
+      <text x="18" y="158" class="sd-stat-sub">unique (a, b) pairs</text>
+      <line x1="140" y1="100" x2="158" y2="100" class="sd-arrow"/>
+      <polygon points="158,96 166,100 158,104" fill="var(--border, #3a3a35)"/>
+      <!-- Box 2: Fix training -->
+      <rect x="166" y="30" width="130" height="140" rx="2" class="sd-box"/>
+      <text x="174" y="52" class="sd-num">02</text>
+      <text x="174" y="70" class="sd-label">Fix training</text>
+      <text x="174" y="108" class="sd-sub">3 attempts</text>
+      <text x="174" y="122" class="sd-sub">5 bugs fixed</text>
+      <text x="174" y="145" class="sd-stat">GPT</text>
+      <text x="174" y="158" class="sd-stat-sub">next-token loss</text>
+      <line x1="296" y1="100" x2="314" y2="100" class="sd-arrow"/>
+      <polygon points="314,96 322,100 314,104" fill="var(--border, #3a3a35)"/>
+      <!-- Box 3: Ablations -->
+      <rect x="322" y="30" width="130" height="140" rx="2" class="sd-box"/>
+      <text x="330" y="52" class="sd-num">03</text>
+      <text x="330" y="70" class="sd-label">Architecture</text>
+      <text x="330" y="86" class="sd-label">ablations</text>
+      <text x="330" y="108" class="sd-sub">depth, width, heads</text>
+      <text x="330" y="122" class="sd-sub">weight tying</text>
+      <text x="330" y="145" class="sd-stat">dim=64</text>
+      <text x="330" y="158" class="sd-stat-sub">16 heads, tied weights</text>
+      <line x1="452" y1="100" x2="470" y2="100" class="sd-arrow"/>
+      <polygon points="470,96 478,100 470,104" fill="var(--border, #3a3a35)"/>
+      <!-- Box 4: Config locked (dashed = next step) -->
+      <rect x="478" y="30" width="130" height="140" rx="2" class="sd-box" stroke-dasharray="4 3"/>
+      <text x="486" y="52" class="sd-num">04</text>
+      <text x="486" y="70" class="sd-label">Config locked</text>
+      <text x="486" y="108" class="sd-sub">20 model sizes</text>
+      <text x="486" y="122" class="sd-sub">× 5 data budgets</text>
+      <text x="486" y="145" class="sd-stat">100</text>
+      <text x="486" y="158" class="sd-stat-sub">runs → Part 2</text>
+      <!-- Formula -->
+      <rect x="624" y="50" width="88" height="100" rx="2" class="sd-box" stroke-dasharray="4 3"/>
+      <text x="668" y="82" text-anchor="middle" class="sd-sub">fit</text>
+      <text x="668" y="98" text-anchor="middle" class="sd-sub">L(N,D) =</text>
+      <text x="668" y="114" text-anchor="middle" class="sd-sub">A/Nᵅ + B/Dᵝ</text>
+      <text x="668" y="134" text-anchor="middle" class="sd-sub">Part 2</text>
+      <line x1="608" y1="100" x2="622" y2="100" class="sd-arrow" stroke-dasharray="4 3"/>
+      <polygon points="622,96 630,100 622,104" fill="var(--border, #3a3a35)"/>
+    </svg>
+
+    <div class="post-body">
+
+      <p class="section-heading" style="margin-top: 0;">Where this came from</p>
+
+      <p>I came across Vlad Feinberg's article on breaking into a frontier lab a few weeks ago. One of his suggested exercises is to derive scaling laws empirically on a narrow task, using only free compute. The Chinchilla paper shows that compute-optimal training requires balancing model size and training tokens according to a specific power law — but that was derived for large language models on internet text. The question that stuck with me: does the same functional form show up on a deterministic, narrow task that fits entirely on a Kaggle T4?</p>
+
+      <p>The task I chose is 3-digit addition. The goal is not to solve addition — a transformer can do that in a few thousand steps. The goal is to empirically characterize how loss scales with model size N and training tokens D, then fit <strong>L(N, D) = A / N^α + B / D^β</strong>, the same form Hoffmann et al. used. Part 1 is the work that makes the sweep valid: getting the training procedure right (three attempts), finding and fixing the bugs that would have silently corrupted the results, running architecture ablations, and locking a configuration. The sweep itself is Part 2.</p>
+
+      <p class="section-heading">The task</p>
+
+      <p>Given <code>a + b</code>, predict <code>c</code>. Both operands are integers from 0 to 999, so c ranges from 0 to 1998. There are exactly 1,000,000 unique (a, b) pairs. We hold out 100,000 as a validation set. The split is combination-aware: each pair is keyed by its canonical sorted form, so if (3, 5) lands in val, the associative pair (5, 3) is removed from train — it does not appear in val, it simply cannot appear in training either. This prevents the model from seeing a structurally equivalent example during training and calling it generalisation.</p>
+
+      <p>Tokenization is character-level: digits 0–9 (indices 0–9), <code>+</code> (10), <code>=</code> (11), PAD (12), EOS (13). Vocabulary size 14. The sequence <code>999+999=1998</code> becomes <code>[9,9,9,10,9,9,9,11,1,9,9,8,13]</code> — 13 tokens, which sets MAX_SEQ_LEN.</p>
+
+      <p>The task being deterministic matters for the scaling law. The irreducible error E in the Chinchilla formula is approximately zero — there is a single correct answer for every input. Loss should scale to zero with enough capacity and data, with no noise floor to estimate separately.</p>
+
+      <p class="section-heading">Three attempts to get training right</p>
+
+      <p>Getting the training procedure correct took three distinct attempts. Each one produced a silent failure — a model that appeared to train (loss going down, no errors) but could not generate correct answers. The wrong turns are worth documenting in detail because they each point at a different failure mode.</p>
+
+      <div class="attempt-block">
+        <div class="attempt-header">
+          <span class="attempt-tag failed">Failed</span>
+          <span class="attempt-title">Attempt 1 — number-level tokenization</span>
+        </div>
+        <div class="attempt-body">
+          <p>The first instinct was to treat each number as a single token. Vocabulary: integers 0–999 as input tokens, 0–1998 as output tokens, plus <code>+</code> and <code>=</code>. Sequence: <code>[a, +, b, =, c]</code> — five tokens. Loss computed only on position 4 (the answer).</p>
+          <p>The reasoning seemed sound — let the model learn that <code>247</code> and <code>381</code> as atomic units compose to <code>628</code>. This worked in the sense that loss went down: a 2-layer model reached ~25% token-level validation accuracy after 50 epochs. But generation was broken. When we tried to generate autoregressively, the model predicted garbage. Root cause: without a causal mask, the model attended to the answer token while predicting the answer token. It had never been forced to predict from the query alone — teacher forcing mismatch.</p>
+          <p>A second problem surfaced here: JAX does not throw on out-of-bounds embedding indices. It silently clamps them. With <code>input_num_classes=1000</code>, the <code>=</code> token (index 1001) shared an embedding vector with <code>999</code>. The model trained on corrupted embeddings for several runs with no signal from the loss.</p>
+        </div>
+        <div class="kept-dropped">
+          <div class="kept"><strong>Kept</strong>Combination-level val split · transformer architecture · AdamW + cosine decay</div>
+          <div class="dropped"><strong>Dropped</strong>Number-level tokenization · output-only loss</div>
+        </div>
+      </div>
+
+      <div class="attempt-block">
+        <div class="attempt-header">
+          <span class="attempt-tag failed">Failed</span>
+          <span class="attempt-title">Attempt 2 — character-level tokens, output-only loss</span>
+        </div>
+        <div class="attempt-body">
+          <p>Switched to character-level tokenization and added a causal mask. But we kept computing loss only on answer tokens — positions after <code>=</code>. After 2 epochs, <code>1+2=</code> predicted EOS immediately.</p>
+          <p>The failure mode was subtle. With output-only loss, the only gradient signal coming from position 3 (<code>=</code>) was from cases where the answer was 1 digit and EOS followed immediately. The model learned to predict EOS after <code>=</code> because that was the dominant token in the positions it was trained on. It had no incentive to predict the first answer digit from the query alone, because it was never penalized for failing to do that.</p>
+          <p>Debugging confirmed it: feeding the full correct sequence <code>[1,10,2,11,3,13,...]</code> showed the model correctly predicted <code>3</code> at position 4. Feeding <code>[1,10,2,11,PAD,PAD,...]</code> — the actual inference condition — caused it to predict garbage. Teacher forcing mismatch, again, through a different mechanism.</p>
+        </div>
+        <div class="kept-dropped">
+          <div class="kept"><strong>Kept</strong>Character-level tokenization · causal mask</div>
+          <div class="dropped"><strong>Dropped</strong>Output-only loss</div>
+        </div>
+      </div>
+
+      <div class="attempt-block">
+        <div class="attempt-header">
+          <span class="attempt-tag worked">Worked</span>
+          <span class="attempt-title">Attempt 3 — full next-token prediction</span>
+        </div>
+        <div class="attempt-body">
+          <p>The fix: compute loss on all non-pad tokens. Labels = input tokens shifted by 1. Loss mask = 1 where the label is a real token. The model must predict every next token from all previous ones — predicting <code>+</code> from <code>a</code>, predicting <code>=</code> from <code>a+b</code>, and predicting the first answer digit from <code>a+b=</code> with only the query visible. With a causal mask, this forces true autoregressive learning. GPT-style.</p>
+          <p>After 2 epochs: <code>123+456=579</code> correct. <code>999+999=1998</code> correct. Carry errors still present on small numbers (<code>1+2=0</code> instead of 3 — still converging). After a few more epochs, improving consistently. Generation works from query alone.</p>
+        </div>
+        <div class="kept-dropped">
+          <div class="kept"><strong>Kept</strong>Everything — this is the training setup for the scaling sweep</div>
+          <div class="dropped"><strong>Dropped</strong>Nothing</div>
+        </div>
+      </div>
+
+      <p>The generation loop, which runs autoregressively from the query string alone:</p>
+
+      <div class="code-block">def predict(trainer, tokenizer, a, b):
+    query = f"{a}+{b}="
+    tokens = [tokenizer.token_to_idx[c] for c in query]
+    answer = ''
+    for _ in range(tokenizer.MAX_SEQ_LEN - len(tokens)):
+        inp = jnp.array([tokens]).astype(jnp.int32)
+        causal_mask = generate_causal_mask(len(tokens))
+        logits = trainer.model.apply(
+            {'params': trainer.state.params},
+            inp, mask=causal_mask, train=False
+        )
+        next_token = int(logits[0, -1, :].argmax())
+        if next_token == tokenizer.EOS_IDX:
+            break
+        if next_token in [tokenizer.token_to_idx['+'], tokenizer.token_to_idx['=']]:
+            break
+        answer += tokenizer.idx_to_token[next_token]
+        tokens.append(next_token)
+    return answer</div>
+
+      <p class="section-heading">Bugs that mattered</p>
+
+      <p>Five bugs were found and fixed across the three attempts. Two of them — the cosine decay alpha and the missing causal mask — would have made the scaling sweep results meaningless, because the model would appear to train while learning almost nothing useful.</p>
+
+      <div class="pipeline-block">
+        <div class="pipeline-row">
+          <div class="pipeline-num">01</div>
+          <div class="pipeline-content">
+            <strong>Wrong cosine decay alpha</strong>
+            <p><code>alpha = 0.1 * self.lr</code> decays the learning rate to lr/2000 after ~100 steps, effectively killing learning for the rest of training. The correct form is <code>alpha = 0.1</code> — decays to lr/10 over the full horizon. This single bug caused all early runs to plateau far too early. The 4-layer model that appeared to get stuck in the depth ablations almost certainly failed because of this, not because of the layer count.</p>
+          </div>
+        </div>
+        <div class="pipeline-row">
+          <div class="pipeline-num">02</div>
+          <div class="pipeline-content">
+            <strong>Causal mask generated but never passed to model.apply</strong>
+            <p>The mask was computed correctly but the parameter was never forwarded into <code>model.apply</code>. The model trained with full attention — it could see all future tokens including the answer — and then failed completely during autoregressive generation when the answer tokens weren't in context. No error was raised; the loss looked fine.</p>
+          </div>
+        </div>
+        <div class="pipeline-row">
+          <div class="pipeline-num">03</div>
+          <div class="pipeline-content">
+            <strong>Loss only on output tokens</strong>
+            <p>As described above: the model learned to predict answer tokens only when answer tokens were already visible in context. At inference time, with only the query in context, it had no useful behaviour for the positions it needed to actually predict.</p>
+          </div>
+        </div>
+        <div class="pipeline-row">
+          <div class="pipeline-num">04</div>
+          <div class="pipeline-content">
+            <strong>Silent JAX out-of-bounds embedding</strong>
+            <p>JAX clamps out-of-bounds embedding indices instead of throwing. With <code>input_num_classes=1000</code>, the <code>=</code> token (index 1001) silently shared an embedding vector with <code>999</code> for the entire number-level tokenization phase. The loss gave no indication.</p>
+          </div>
+        </div>
+        <div class="pipeline-row">
+          <div class="pipeline-num">05</div>
+          <div class="pipeline-content">
+            <strong>PyTorch .unsqueeze in JAX expand_mask</strong>
+            <p>The <code>expand_mask</code> helper used <code>.unsqueeze()</code> (PyTorch API) instead of <code>jnp.expand_dims()</code>. The causal mask happened to already be shape <code>(1,1,S,S)</code>, so the call was a no-op rather than a crash — it worked by coincidence of the input shape, not by correctness.</p>
+          </div>
+        </div>
+      </div>
+
+      <p class="section-heading">Architecture ablations</p>
+
+      <p>With the correct training setup locked, we ran ablations across width, head count, depth, and weight tying. All runs used lr=5e-3, grad clip 1.0, and the full next-token loss. Numbers below are from W&B logs.</p>
+
+      <p><strong>Width and head count</strong> (2 layers, 2 epochs):</p>
+
+      <table class="data-table">
+        <thead>
+          <tr><th>dim</th><th>Heads</th><th>Head dim</th><th>Val loss</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>256</td><td>8</td><td>32</td><td>1.296</td></tr>
+          <tr><td>256</td><td>32</td><td>8</td><td>1.270</td></tr>
+          <tr><td>128</td><td>8</td><td>16</td><td>1.268</td></tr>
+          <tr><td>64</td><td>8</td><td>8</td><td>1.249</td></tr>
+          <tr><td>64</td><td>32</td><td>2</td><td>1.139</td></tr>
+          <tr><td>128</td><td>16</td><td>8</td><td>1.096</td></tr>
+          <tr><td>64</td><td>16</td><td>4</td><td>1.094</td></tr>
+        </tbody>
+      </table>
+
+      <p>Smaller models converge better on this task — the bottleneck is data, not capacity. dim=64 with 16 heads (head_dim=4) is the clear winner. Larger dims hurt convergence even when the head count is adjusted. The small head_dim of 4 is unusual for NLP tasks but fits here: the sequence is only 13 tokens and the vocabulary is 14 tokens.</p>
+
+      <p><strong>Depth</strong> (dim=64, heads=16, 2 epochs):</p>
+
+      <table class="data-table">
+        <thead>
+          <tr><th>Layers</th><th>Val loss</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>2</td><td>1.094</td></tr>
+          <tr><td>6</td><td>1.077</td></tr>
+          <tr><td>4</td><td>1.061</td></tr>
+        </tbody>
+      </table>
+
+      <p>4 layers edges out 2 and 6 at dim=64. The 6-layer result was only measured at 2 epochs so it may improve further, but 4 layers is stable and converges reliably.</p>
+
+      <p><strong>Weight tying</strong> (4 layers, dim=64, heads=16):</p>
+
+      <table class="data-table">
+        <thead>
+          <tr><th>Weight tying</th><th>Val loss (2 epochs)</th><th>Val loss (50 epochs)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>No</td><td>1.061</td><td>1.053</td></tr>
+          <tr><td>Yes</td><td>1.038</td><td>1.030</td></tr>
+        </tbody>
+      </table>
+
+      <p>With a vocabulary of 14 tokens, the input embedding and output projection can share the same matrix. We implemented it by storing one learned <code>embedding</code> parameter and using <code>logits = x @ self.embedding.T</code> in the forward pass. Weight tying gives ~0.02 lower val loss at both checkpoints and uses fewer parameters (~200K vs ~206K). Locked in.</p>
+
+      <p class="section-heading">Locked configuration</p>
+
+      <p>The configuration below is what the final run (4 layers, dim=64, 16 heads, 50 epochs, ~200K parameters) used, and is fixed for the scaling sweep. The only things that vary across runs are d_model (which scales N) and training tokens D.</p>
+
+      <table class="data-table">
+        <thead>
+          <tr><th>Hyperparameter</th><th>Value</th><th>Rationale</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>n_layers</td><td>4</td><td>Final config from ablations</td></tr>
+          <tr><td>num_heads</td><td>16 (= d_model / 4)</td><td>head_dim=4 performed best; ratio kept fixed across sizes</td></tr>
+          <tr><td>ff_size</td><td>4 × d_model</td><td>Standard transformer ratio</td></tr>
+          <tr><td>lr</td><td>5e-3</td><td>Best across ablations</td></tr>
+          <tr><td>cosine alpha</td><td>0.1</td><td>Decays to lr/10 over full horizon (bug fix from 0.1 × lr)</td></tr>
+          <tr><td>grad clip</td><td>1.0</td><td>Prevents spikes in early training</td></tr>
+          <tr><td>dropout</td><td>0.15</td><td></td></tr>
+          <tr><td>optimizer</td><td>AdamW</td><td></td></tr>
+          <tr><td>weight tying</td><td>yes</td><td>Faster convergence, fewer parameters</td></tr>
+          <tr><td>loss</td><td>next-token, all non-pad</td><td>Forces autoregressive learning</td></tr>
+          <tr><td>causal mask</td><td>yes</td><td>Required for generation to work</td></tr>
+          <tr><td>vocab size</td><td>14</td><td>Digits + operators + PAD + EOS</td></tr>
+          <tr><td>MAX_SEQ_LEN</td><td>13</td><td>Longest sequence: 999+999=1998⟨eos⟩</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout">
+        <p>The 6ND FLOPs approximation is less accurate here than for large LLMs — at small model sizes, the embedding parameters are a large fraction of total parameters (~30%+), which the approximation doesn't account for. This will be flagged as a limitation in the Part 2 results.</p>
+      </div>
+
+      <p>Config is locked. The sweep is running. Results in Part 2.</p>
+
+    </div>
+
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <p>© 2026 Akarsh Upadhyay</p>
+      <p><a href="mailto:akarshupadhyayabc@gmail.com">akarshupadhyayabc@gmail.com</a></p>
+    </div>
+  </footer>
+
+  <script src="theme.js"></script>
+</body>
+</html>
