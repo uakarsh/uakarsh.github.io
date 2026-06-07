@@ -466,11 +466,55 @@
 
       <p class="section-heading">Architecture ablations</p>
 
-      <p>With the correct training setup locked, we ran ablations across depth, width, and head count to find an architecture that would be stable across a wide range of model sizes without needing per-run hyperparameter tuning. These ran as separate W&B experiments before the run shown here; the exact logged loss values are in the W&B project and will be pulled in when the tables below are finalised.</p>
+      <p>With the correct training setup locked, we ran ablations across width, head count, depth, and weight tying. All runs used lr=5e-3, grad clip 1.0, and the full next-token loss. Numbers below are from W&B logs.</p>
 
-      <p>The direction of the findings: <strong>smaller models converged better on this task</strong>. The bottleneck is data, not capacity — more parameters slow convergence rather than helping. Across depth sweeps (1–4 layers at a fixed large dimension), 3 layers came out best, but the 4-layer run coincided with the cosine decay bug and its result is not conclusive. Across dimension sweeps, dim=64 with 16 heads (head_dim=4) consistently outperformed larger dims. Across head count, small head_dim worked well — unusual for standard NLP tasks, but the sequence is short (13 tokens) and the vocabulary tiny (14 tokens).</p>
+      <p><strong>Width and head count</strong> (2 layers, 2 epochs):</p>
 
-      <p><strong>Weight tying.</strong> With a vocabulary of 14 tokens, the input embedding and output projection can share the same matrix. We implemented it by storing one learned <code>embedding</code> parameter and using <code>logits = x @ self.embedding.T</code> in the forward pass. Weight tying converged faster and reached lower loss. Locked in for the sweep.</p>
+      <table class="data-table">
+        <thead>
+          <tr><th>dim</th><th>Heads</th><th>Head dim</th><th>Val loss</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>256</td><td>8</td><td>32</td><td>1.296</td></tr>
+          <tr><td>256</td><td>32</td><td>8</td><td>1.270</td></tr>
+          <tr><td>128</td><td>8</td><td>16</td><td>1.268</td></tr>
+          <tr><td>64</td><td>8</td><td>8</td><td>1.249</td></tr>
+          <tr><td>64</td><td>32</td><td>2</td><td>1.139</td></tr>
+          <tr><td>128</td><td>16</td><td>8</td><td>1.096</td></tr>
+          <tr><td>64</td><td>16</td><td>4</td><td>1.094</td></tr>
+        </tbody>
+      </table>
+
+      <p>Smaller models converge better on this task — the bottleneck is data, not capacity. dim=64 with 16 heads (head_dim=4) is the clear winner. Larger dims hurt convergence even when the head count is adjusted. The small head_dim of 4 is unusual for NLP tasks but fits here: the sequence is only 13 tokens and the vocabulary is 14 tokens.</p>
+
+      <p><strong>Depth</strong> (dim=64, heads=16, 2 epochs):</p>
+
+      <table class="data-table">
+        <thead>
+          <tr><th>Layers</th><th>Val loss</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>2</td><td>1.094</td></tr>
+          <tr><td>6</td><td>1.077</td></tr>
+          <tr><td>4</td><td>1.061</td></tr>
+        </tbody>
+      </table>
+
+      <p>4 layers edges out 2 and 6 at dim=64. The 6-layer result was only measured at 2 epochs so it may improve further, but 4 layers is stable and converges reliably.</p>
+
+      <p><strong>Weight tying</strong> (4 layers, dim=64, heads=16):</p>
+
+      <table class="data-table">
+        <thead>
+          <tr><th>Weight tying</th><th>Val loss (2 epochs)</th><th>Val loss (50 epochs)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>No</td><td>1.061</td><td>1.053</td></tr>
+          <tr><td>Yes</td><td>1.038</td><td>1.030</td></tr>
+        </tbody>
+      </table>
+
+      <p>With a vocabulary of 14 tokens, the input embedding and output projection can share the same matrix. We implemented it by storing one learned <code>embedding</code> parameter and using <code>logits = x @ self.embedding.T</code> in the forward pass. Weight tying gives ~0.02 lower val loss at both checkpoints and uses fewer parameters (~200K vs ~206K). Locked in.</p>
 
       <p class="section-heading">Locked configuration</p>
 
