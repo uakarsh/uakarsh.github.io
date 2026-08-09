@@ -527,6 +527,16 @@ a:hover { text-decoration-color: var(--accent); }
 
 .exp-body { font-size: 0.93rem; line-height: 1.8; color: var(--text-2); }
 .exp-body p { margin-bottom: 10px; }
+.exp-sublabel {
+  font-family: var(--font-ui);
+  font-size: 0.68rem;
+  font-weight: 500;
+  color: var(--text-3);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-top: 18px !important;
+  margin-bottom: 6px !important;
+}
 .exp-body p:last-child { margin-bottom: 0; }
 
 /* ── Education ───────────────────────────────────────────── */
