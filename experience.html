@@ -57,34 +57,41 @@
           <p class="exp-company">Microsoft</p>
           <p class="exp-role">Applied Scientist 2 · MSAN</p>
           <div class="exp-body">
+            <p class="exp-sublabel">Ads Trust &amp; Safety</p>
             <p>
-              I own the <strong>defect rate measurement pipelines</strong> for Ads Trust &amp; Safety —
-              the infrastructure that tracks what fraction of served ads are violating a policy,
-              across both the <strong>Search</strong> and <strong>Native</strong> platforms (MSN.com and partner network).
-              Defect rate is the primary health metric for ATS: out of every hundred ads served,
-              how many are in policy violation. These pipelines are the source of truth for that number.
+              ATS is responsible for ensuring that ads served across Microsoft's platforms comply with
+              policy — every violation that reaches a user is a defect. Keeping that rate low is the
+              core mandate of the team, and measuring it accurately is what makes enforcement possible.
             </p>
             <p>
-              I recently rewrote the <strong>clickbait measurement model</strong> for Ads Trust &amp; Safety —
-              updating it to align with latest policy guidelines.
-              Offline: first-party precision went from 43.3 → <strong>73.5</strong>,
-              third-party F1 from 72.7 → <strong>76.4</strong>. Shadow runs confirmed the gains:
-              human reviewers sided <strong>57% vs 43%</strong> with the new system.
-              I also built a structured knowledge base so an LLM agent can now execute
-              <strong>70–80% of the analysis pipeline end-to-end</strong>.
+              I own the <strong>defect rate measurement pipelines</strong> — the infrastructure that
+              tracks what fraction of served ads are in policy violation, across both
+              <strong>Search</strong> and <strong>Native</strong> platforms (MSN.com and partner network).
+              These pipelines are the source of truth for ATS: the number they produce determines
+              whether enforcement is working end-to-end.
             </p>
             <p>
-              I work on retrieval models for Microsoft's Audience Network — the system that
-              matches ads to relevant content across the web. My main focus is intent-based
-              retrieval: building encoder models that understand what a user is actually
-              looking for and surface ads that genuinely match.
+              I also rewrote the <strong>clickbait measurement model</strong>, updating it to align
+              with latest policy guidelines. Offline: first-party precision improved from
+              43.3 → <strong>73.5</strong>, third-party F1 from 72.7 → <strong>76.4</strong>.
+              Shadow runs confirmed the gains: human reviewers sided <strong>57% vs 43%</strong>
+              with the new system. I also built a structured knowledge base so an LLM agent can now
+              execute <strong>70–80% of the analysis pipeline end-to-end</strong>.
+            </p>
+
+            <p class="exp-sublabel">Microsoft Audience Network (MSAN)</p>
+            <p>
+              MSAN is Microsoft's programmatic ad network, serving ads across Bing, MSN.com, and
+              partner sites. Retrieval is the first — and most consequential — stage of the ad pipeline:
+              it determines which ads are even in contention for a given query.
             </p>
             <p>
-              The next-generation retrieval model I led achieved
-              <strong>+14.32 absolute precision points (P@100)</strong> over the production
-              baseline using 30× less training data. It went into A/B testing in NA and
-              delivered <strong>+0.61% CTR</strong> and <strong>+0.51% revenue lift</strong>.
-              The evaluation methodology was adopted as standard across US and India MSAN teams.
+              I worked on intent-based retrieval: building encoder models that understand what a user
+              is actually looking for and surface ads that genuinely match. The next-generation model
+              I led achieved <strong>+14.32 absolute precision points (P@100)</strong> over the
+              production baseline using 30× less training data, delivering <strong>+0.61% CTR</strong>
+              and <strong>+0.51% revenue lift</strong> in A/B testing. The evaluation methodology
+              I built was adopted as standard across US and India MSAN teams.
             </p>
             <p>
               I also designed a unified evaluation framework across three teams (IDC, STCA, US MSAN)
