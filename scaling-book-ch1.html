@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Short pointers from Chapter 1 of How to Scale Your Model (rooflines), with a link to my full notes. By Akarsh Upadhyay." />
+  <title>How to Scale Your Model, Ch. 1 notes — Akarsh Upadhyay</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .back-link {
+      display: inline-block;
+      font-family: var(--font-ui);
+      font-size: 0.65rem;
+      color: var(--text-3);
+      text-decoration: none;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 48px;
+      transition: color var(--ease);
+    }
+    .back-link:hover { color: var(--accent); text-decoration: none; }
+    .post-header { margin-bottom: 56px; }
+    .post-title {
+      font-family: var(--font-display);
+      font-size: 2.4rem;
+      font-weight: 400;
+      line-height: 1.2;
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+    .post-byline {
+      font-family: var(--font-ui);
+      font-size: 0.68rem;
+      color: var(--text-3);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .post-body p {
+      font-size: 1rem;
+      line-height: 1.9;
+      color: var(--text-2);
+      margin-bottom: 20px;
+    }
+    .post-body ul { margin: 0 0 24px 20px; }
+    .post-body li {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: var(--text-2);
+      margin-bottom: 14px;
+    }
+    .post-body strong { color: var(--text); font-weight: 500; }
+    .post-body a { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <nav id="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-home">Akarsh Upadhyay</a>
+      <ul class="nav-links">
+        <li><a href="research.html" class="hide-sm">Research</a></li>
+        <li><a href="projects.html" class="hide-sm">Projects</a></li>
+        <li><a href="experience.html" class="hide-sm">Experience</a></li>
+        <li><a href="writing.html" class="active hide-sm">Writing</a></li>
+        <li><a href="people.html" class="hide-sm">People</a></li>
+        <li><a href="bookshelf.html" class="hide-sm">Bookshelf</a></li>
+        <li><label class="toggle-switch" aria-label="Toggle dark mode"><input type="checkbox" id="themeCheck" /><span class="toggle-track"><span class="toggle-thumb"></span></span></label></li>
+      </ul>
+      <button class="nav-menu-btn" id="menuBtn" aria-label="Menu"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="2" y1="5" x2="16" y2="5"/><line x1="2" y1="9" x2="16" y2="9"/><line x1="2" y1="13" x2="16" y2="13"/></svg></button>
+    </div>
+  </nav>
+
+  <div class="nav-drawer" id="navDrawer">
+    <ul>
+      <li><a href="research.html">Research</a></li>
+      <li><a href="projects.html">Projects</a></li>
+      <li><a href="experience.html">Experience</a></li>
+      <li><a href="writing.html" class="active">Writing</a></li>
+      <li><a href="people.html">People</a></li>
+      <li><a href="bookshelf.html">Bookshelf</a></li>
+    </ul>
+  </div>
+
+  <main>
+    <a href="writing.html" class="back-link">← Writing</a>
+    <div class="post-header">
+      <h1 class="post-title">How to Scale Your Model, Chapter 1: rooflines</h1>
+      <div class="post-byline">Akarsh Upadhyay &nbsp;·&nbsp; October 2026</div>
+    </div>
+
+    <div class="post-body">
+      <p>I'm working through <a href="https://jax-ml.github.io/scaling-book/">How to Scale Your Model</a> and keeping notes as I go. Chapter 1 is about rooflines: a way to tell whether a computation is limited by math, memory bandwidth, or the network. These are the pointers I'd want to remember; the derivations and exercises are in the notes.</p>
+
+      <ul>
+        <li><strong>Three limits.</strong> Compute (FLOPs/s), bandwidth (bytes/s) and memory capacity. Runtime is bounded below by <em>max(T<sub>math</sub>, T<sub>comms</sub>)</em> when the two overlap, and above by their sum.</li>
+        <li><strong>Arithmetic intensity</strong> is FLOPs per byte moved, a property of the algorithm. You are compute-bound only when it exceeds the hardware's peak FLOPs/s divided by bandwidth.</li>
+        <li><strong>The roofline</strong> is achievable FLOPs/s = min(peak, AI × bandwidth). Taking the reciprocal flips the max into a min, which I got wrong on my first pass.</li>
+        <li><strong>Matmul</strong> has AI ≈ B (batch size) when B ≪ D, F. That makes the threshold about 240 on a TPU v5e and about 298 on an H100 (3.35 TB/s HBM, dense bf16).</li>
+        <li><strong>Weight precision matters.</strong> With int8 weights and bf16 activations the threshold halves to about 120, because each weight costs one byte instead of two.</li>
+        <li><strong>Reuse is where intensity comes from.</strong> A dot product has AI ≈ ½, and a matmul with a different weight matrix per batch element is stuck at AI = 2, about 0.4% of int8 peak. Decode attention over per-sequence KV caches is the same story.</li>
+        <li><strong>Network rooflines count only the bytes crossing the link.</strong> I had mixed HBM traffic into the network term; each chip has its own HBM roofline separately.</li>
+      </ul>
+
+      <p>The full notes include the worked exercises, a roofline plot across several D and F, and my corrections: <a href="https://github.com/uakarsh/scaling-book/blob/main/chapter-1/scaling_book_ch1.pdf">typeset notes (PDF)</a> and <a href="https://github.com/uakarsh/scaling-book/blob/main/chapter-1/scaling_book_ch1_handwritten_notes.pdf">handwritten notes (PDF)</a>. More chapters in the <a href="https://github.com/uakarsh/scaling-book">repo</a> as I get to them.</p>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <p>© 2026 Akarsh Upadhyay</p>
+      <p><a href="mailto:akarshupadhyayabc@gmail.com">akarshupadhyayabc@gmail.com</a></p>
+    </div>
+  </footer>
+
+  <script src="theme.js"></script>
+</body>
+</html>
