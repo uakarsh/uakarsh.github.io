@@ -91,8 +91,24 @@
     </div>
 
     <div class="post-body">
-      <p>I'm working through <a href="https://jax-ml.github.io/scaling-book/">How to Scale Your Model</a> and keeping notes as I go. Chapter 1 is about rooflines: a way to tell whether a computation is limited by math, memory bandwidth, or the network. These are the pointers I'd want to remember; the derivations and exercises are in the notes.</p>
+      <p><strong>What this book should let you do:</strong></p>
+      <ul>
+        <li>Ballpark how close parts of your model are to their theoretical optimum.</li>
+        <li>Make informed choices about different parallelism schemes at different scales.</li>
+        <li>Estimate the cost and time required to train a large Transformer model.</li>
+        <li>Design algorithms that take advantage of specific hardware affordances.</li>
+        <li>Design hardware driven by an explicit understanding of what limits current algorithm performance.</li>
+      </ul>
 
+      <p><strong>Questions to answer:</strong></p>
+      <ul>
+        <li>How long should a matrix multiply of a certain size take? At what point is it compute-bound vs. memory-bound?</li>
+        <li>How are TPUs wired together to form training clusters? How much bandwidth does each part of the system have?</li>
+        <li>How long does it take to gather, scatter, or re-distribute arrays across multiple TPUs?</li>
+        <li>How do we efficiently multiply matrices that are distributed differently across devices?</li>
+      </ul>
+
+      <p><strong>Chapter 1 pointers (rooflines):</strong></p>
       <ul>
         <li><strong>Three limits.</strong> Compute (FLOPs/s), bandwidth (bytes/s) and memory capacity. Runtime is bounded below by <em>max(T<sub>math</sub>, T<sub>comms</sub>)</em> when the two overlap, and above by their sum.</li>
         <li><strong>Arithmetic intensity</strong> is FLOPs per byte moved, a property of the algorithm. You are compute-bound only when it exceeds the hardware's peak FLOPs/s divided by bandwidth.</li>
@@ -103,7 +119,7 @@
         <li><strong>Network rooflines count only the bytes crossing the link.</strong> I had mixed HBM traffic into the network term; each chip has its own HBM roofline separately.</li>
       </ul>
 
-      <p>The full notes include the worked exercises, a roofline plot across several D and F, and my corrections: <a href="https://github.com/uakarsh/scaling-book/blob/main/chapter-1/scaling_book_ch1.pdf">typeset notes (PDF)</a> and <a href="https://github.com/uakarsh/scaling-book/blob/main/chapter-1/scaling_book_ch1_handwritten_notes.pdf">handwritten notes (PDF)</a>. More chapters in the <a href="https://github.com/uakarsh/scaling-book">repo</a> as I get to them.</p>
+      <p>These are my notes on <a href="https://jax-ml.github.io/scaling-book/">How to Scale Your Model</a>. The full notes include the worked exercises, a roofline plot across several D and F, and my corrections: <a href="https://github.com/uakarsh/scaling-book/blob/main/chapter-1/scaling_book_ch1.pdf">typeset notes (PDF)</a> and <a href="https://github.com/uakarsh/scaling-book/blob/main/chapter-1/scaling_book_ch1_handwritten_notes.pdf">handwritten notes (PDF)</a>. More chapters in the <a href="https://github.com/uakarsh/scaling-book">repo</a> as I get to them.</p>
     </div>
   </main>
 
